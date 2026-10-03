@@ -123,6 +123,14 @@ public final class SkyBallsMod implements ClientModInitializer {
         com.epic60869.skyballs.features.misc.EventCalendar.init();
         com.epic60869.skyballs.features.garden.PestHighlight.init();
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
+        // On 26.3 typed text only arrives while SDL text input is on, which vanilla turns on for its own text boxes.
+        // MoulConfig's (the settings search, text options) never do, so it's on for as long as its screen is open.
+        net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+            if (!(screen instanceof io.github.notenoughupdates.moulconfig.platform.MoulConfigScreenComponent)) return;
+            client.textInputManager().startTextInput(screen);
+            net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.remove(screen)
+                .register(removed -> client.textInputManager().stopTextInput(removed));
+        });
 
         registerCommands();
 
@@ -153,7 +161,18 @@ public final class SkyBallsMod implements ClientModInitializer {
                     .then(ClientCommands.argument("message", StringArgumentType.greedyString())
                         .executes(context -> sendGlobalChat(StringArgumentType.getString(context, "message")))));
             }
+            // /pt Name: shortcut for /p transfer Name.
+            dispatcher.register(ClientCommands.literal("pt")
+                .executes(context -> partyTransfer(""))
+                .then(ClientCommands.argument("player", StringArgumentType.word())
+                    .executes(context -> partyTransfer(StringArgumentType.getString(context, "player")))));
         });
+    }
+
+    private int partyTransfer(String player) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.getConnection() != null) mc.getConnection().sendCommand(("p transfer " + player).trim());
+        return 1;
     }
 
     private com.mojang.brigadier.builder.LiteralArgumentBuilder<net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource> commandTree(String name) {

@@ -50,6 +50,9 @@ public final class PartyCommands {
     private record Pending(String command, long at) {}
 
     private static String leader;
+    /** A leader command that came while the leader was unknown, run if /p list shows you lead. */
+    private static Pending afterLeaderKnown;
+    private static long askedLeaderAt;
     private static long lastCommand;
     private static long lastSent;
     /** Commands waiting to be sent, one at a time so Hypixel doesn't say "Woah slow down". */
@@ -80,7 +83,10 @@ public final class PartyCommands {
         if ((m = INVITED.matcher(text)).find() && m.group("me").equalsIgnoreCase(me())) leader = me();
         else if ((m = TRANSFERRED.matcher(text)).find()) leader = m.group("name");
         else if ((m = JOINED_OTHER.matcher(text)).find()) leader = m.group("name");
-        else if ((m = LEADER_LIST.matcher(text)).find()) leader = m.group("name");
+        else if ((m = LEADER_LIST.matcher(text)).find()) {
+            leader = m.group("name");
+            onLeaderKnown();
+        }
         else if (text.equals("You left the party.") || text.endsWith("has disbanded the party!")
             || text.startsWith("You have been kicked from the party") || text.equals("The party was disbanded because all invites expired and the party was empty.")) {
             leader = null;
@@ -126,18 +132,42 @@ public final class PartyCommands {
             return;
         }
 
-        if (leader == null || !leader.equalsIgnoreCase(me())) return;
+        if (leader != null && !leader.equalsIgnoreCase(me())) return;
         // Your own !warp, !allinvite and !f7 work too (like Odin); transferring or promoting yourself doesn't.
         boolean self = sender.equalsIgnoreCase(me());
         String toRun = switch (command) {
             case "warp", "w" -> config.warp ? "party warp" : null;
             case "allinvite", "allinv" -> config.allInvite ? "party settings allinvite" : null;
-            case "pt", "transfer", "ptme" -> config.transfer && !self ? "party transfer " + sender : null;
+            // "!pt Name" transfers to Name (yours too); "!pt" and "!ptme" to whoever asked.
+            case "pt", "transfer" -> config.transfer && (arg != null || !self) ? "party transfer " + (arg == null ? sender : arg) : null;
+            case "ptme" -> config.transfer && !self ? "party transfer " + sender : null;
             case "promote" -> config.promote && (arg != null || !self) ? "party promote " + (arg == null ? sender : arg) : null;
             case "demote" -> config.promote && (arg != null || !self) ? "party demote " + (arg == null ? sender : arg) : null;
             default -> instance(config, command);
         };
-        if (toRun != null) run(toRun);
+        if (toRun == null) return;
+        if (leader != null) {
+            run(toRun);
+            return;
+        }
+        // Leader unknown (the game started while you were already in a party): ask with /p list, and run it once
+        // the list says you're leader.
+        long now = System.currentTimeMillis();
+        afterLeaderKnown = new Pending(toRun, now);
+        if (now - askedLeaderAt > 10_000L) {
+            askedLeaderAt = now;
+            run("party list");
+        }
+    }
+
+    /** Called when "Party Leader:" says who leads: runs the command that was waiting for it, if you lead. */
+    private static void onLeaderKnown() {
+        Pending waiting = afterLeaderKnown;
+        afterLeaderKnown = null;
+        if (waiting == null || System.currentTimeMillis() - waiting.at() > 8_000L || !me().equalsIgnoreCase(leader)) return;
+        long now = System.currentTimeMillis();
+        lastCommand = now;
+        Minecraft.getInstance().execute(() -> pending.add(new Pending(waiting.command(), now + REPLY_DELAY_MS)));
     }
 
     /** !f1-!f7, !m1-!m7 and !t1-!t5: Hypixel's /joininstance for that floor or tier (Odin's queue commands). */
