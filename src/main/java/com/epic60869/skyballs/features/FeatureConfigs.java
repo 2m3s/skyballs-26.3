@@ -996,6 +996,28 @@ public final class FeatureConfigs {
         public boolean pristineRecord = false;
     }
 
+    public static final class SkillProgress {
+        @Expose
+        @ConfigOption(name = "Skill Progress", desc = "SkyHanni's Skill Progress display: the skill you're getting XP in, its level, a progress bar, percent and XP to the next level, XP per hour and the time until you level up. Move it in /sb gui.")
+        @ConfigEditorBoolean
+        public boolean enabled = true;
+
+        @Expose
+        @ConfigOption(name = "Progress Bar", desc = "Show a progress bar to the next level.")
+        @ConfigEditorBoolean
+        public boolean progressBar = true;
+
+        @Expose
+        @ConfigOption(name = "XP/h and Time to Level", desc = "Show XP per hour (only counting time you're getting XP) and how long until the next level.")
+        @ConfigEditorBoolean
+        public boolean rate = true;
+
+        @Expose
+        @ConfigOption(name = "Hide After (s)", desc = "Hide the display this long after your last XP gain. 0: keep showing the last skill.")
+        @ConfigEditorSlider(minValue = 0, maxValue = 300, minStep = 5)
+        public int hideAfter = 60;
+    }
+
     public static final class Foraging {
         @Expose
         @ConfigOption(name = "Sweep Display", desc = "HUD showing your Sweep stat and how many logs you will cut.")

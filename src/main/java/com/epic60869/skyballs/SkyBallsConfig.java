@@ -651,6 +651,10 @@ public final class SkyBallsConfig extends Config {
     public Mining mining = new Mining();
 
     @Expose
+    @Category(name = "Skills", desc = "SkyHanni's Skill Progress display.")
+    public com.epic60869.skyballs.features.FeatureConfigs.SkillProgress skills = new com.epic60869.skyballs.features.FeatureConfigs.SkillProgress();
+
+    @Expose
     @Category(name = "Foraging", desc = "Sweep display.")
     public com.epic60869.skyballs.features.FeatureConfigs.Foraging foraging = new com.epic60869.skyballs.features.FeatureConfigs.Foraging();
 

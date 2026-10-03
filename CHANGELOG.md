@@ -7,6 +7,7 @@ All notable changes to SkyBalls are listed here, newest first.
 The Minecraft 26.3 build starts again at 1.0, and checks for updates on its own releases (2m3s/skyballs-26.3).
 
 ### Added
+- Skill Progress (Skills), from SkyHanni: the skill you're getting XP in with its level, a progress bar, percent and XP to the next level, XP per hour and the time until you level up.
 - Party Coord Waypoints (Mayors > Diana, on by default), like SkyHanni: coordinates a party member sends ("x: -30, y: 87, z: 126") get a beacon waypoint with their name and distance, until you reach it or for a minute.
 - Dungeon Chest Profit (Dungeons > Chest Profit): a reward chest's value minus its cost above the chest; at Croesus, each chest's profit with the best one highlighted, and the list of runs tinted green (unopened), yellow (one chest opened) or red (all claimed).
 - Highlight Bats (Dungeons > Mobs), and /sb debug starred to see what the starred mob highlight finds.

@@ -79,6 +79,7 @@ public final class SkyBallsMod implements ClientModInitializer {
         com.epic60869.skyballs.features.portfolio.Portfolio.init(configDir);
         com.epic60869.skyballs.features.portfolio.BazaarNotifications.init();
         com.epic60869.skyballs.features.skills.SkillFeatures.init();
+        com.epic60869.skyballs.features.skills.SkillProgress.init();
         com.epic60869.skyballs.features.dungeons.SkyBallsDungeons.init();
         com.epic60869.skyballs.features.dungeons.DungeonFeatures.init(configDir);
         com.epic60869.skyballs.features.misc.PartyCommands.init();
