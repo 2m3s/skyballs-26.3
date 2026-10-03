@@ -1,12 +1,12 @@
 package com.epic60869.skyballs.mixin;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsGlobalChat;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +26,7 @@ public abstract class SkyBallsChatScreenMixin {
         }
 
         int key = event.key();
-        if (key != GLFW.GLFW_KEY_ENTER && key != GLFW.GLFW_KEY_KP_ENTER) {
+        if (key != InputConstants.KEY_RETURN && key != InputConstants.KEY_NUMPADENTER) {
             return;
         }
 

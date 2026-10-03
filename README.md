@@ -1,6 +1,6 @@
 # SkyJew Mod
 
-An all-in-one Fabric mod for Hypixel SkyBlock on Minecraft 26.2. Commands are not case-sensitive.
+An all-in-one Fabric mod for Hypixel SkyBlock on Minecraft 26.3. Commands are not case-sensitive.
 
 - `/sj` opens the settings; `/sj gui` moves and resizes every HUD.
 - What changed in each version: [CHANGELOG.md](CHANGELOG.md).

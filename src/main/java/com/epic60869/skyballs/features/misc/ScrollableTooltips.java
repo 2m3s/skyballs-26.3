@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.misc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.mixin.SkyBallsClientTextTooltipAccessor;
 import com.epic60869.skyballs.mixin.SkyBallsContainerScreenAccessor;
@@ -13,7 +14,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 import java.util.Objects;
@@ -109,10 +109,10 @@ public final class ScrollableTooltips {
         double x = 0;
         double y = 0;
         if (settings.enableWASD) {
-            if (isKeyDown(GLFW.GLFW_KEY_A)) x -= speed;
-            if (isKeyDown(GLFW.GLFW_KEY_D)) x += speed;
-            if (isKeyDown(GLFW.GLFW_KEY_W)) y -= speed;
-            if (isKeyDown(GLFW.GLFW_KEY_S)) y += speed;
+            if (isKeyDown(InputConstants.KEY_A)) x -= speed;
+            if (isKeyDown(InputConstants.KEY_D)) x += speed;
+            if (isKeyDown(InputConstants.KEY_W)) y -= speed;
+            if (isKeyDown(InputConstants.KEY_S)) y += speed;
         }
         boolean sideways = isHorizontalModifierDown(settings);
         if (isKeyDown(settings.moveUpKey)) {
@@ -159,15 +159,14 @@ public final class ScrollableTooltips {
     }
 
     private static boolean isHorizontalModifierDown(SkyBallsConfig.TooltipScroll settings) {
-        return (settings.useLeftShift && isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) || isKeyDown(settings.horizontalMovementKey);
+        return (settings.useLeftShift && isKeyDown(InputConstants.KEY_LSHIFT)) || isKeyDown(settings.horizontalMovementKey);
     }
 
+    /** A MoulConfig keybind: a key, or a mouse button (see Input.bindMouseButton). */
     private static boolean isKeyDown(int key) {
-        long window = Minecraft.getInstance().getWindow().handle();
-        if (key >= GLFW.GLFW_MOUSE_BUTTON_1 && key <= GLFW.GLFW_MOUSE_BUTTON_LAST) {
-            return GLFW.glfwGetMouseButton(window, key) == GLFW.GLFW_PRESS;
-        }
-        return key >= GLFW.GLFW_KEY_SPACE && key <= GLFW.GLFW_KEY_LAST && GLFW.glfwGetKey(window, key) == GLFW.GLFW_PRESS;
+        int mouse = com.epic60869.skyballs.custom.util.Input.bindMouseButton(key);
+        if (mouse != -1) return com.epic60869.skyballs.custom.util.Input.mouseDown(mouse);
+        return key > 9 && com.epic60869.skyballs.custom.util.Input.keyDown(key);
     }
 
     /** Identifies "the same tooltip": the hovered slot plus the first line's text. */

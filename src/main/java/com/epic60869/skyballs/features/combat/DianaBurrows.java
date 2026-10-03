@@ -437,15 +437,15 @@ public final class DianaBurrows {
     }
 
     private static boolean dists(ClientboundLevelParticlesPacket p, float x, float y, float z) {
-        return round2(p.getXDist()) == x && round2(p.getYDist()) == y && round2(p.getZDist()) == z;
+        return round2(p.xDist()) == x && round2(p.yDist()) == y && round2(p.zDist()) == z;
     }
 
     /** SBO's ParticleTypes: which particles mark a burrow, and its type. */
     private static void burrowParticle(ClientboundLevelParticlesPacket p) {
-        var type = p.getParticle().getType();
-        BlockPos pos = blockOf(p.getX(), p.getY(), p.getZ()).below();
+        var type = p.particle().getType();
+        BlockPos pos = blockOf(p.x(), p.y(), p.z()).below();
         // The smoke of a burrow that's gone.
-        if (type == ParticleTypes.LARGE_SMOKE && p.getMaxSpeed() == 0.01f && p.getXDist() == 0f && p.getYDist() == 0f && p.getZDist() == 0f) {
+        if (type == ParticleTypes.LARGE_SMOKE && p.xMaxSpeed() == 0.01f && p.xDist() == 0f && p.yDist() == 0f && p.zDist() == 0f) {
             markRecentlyRemoved(pos);
             burrows.remove(pos);
             arrows.remove(pos);
@@ -455,9 +455,9 @@ public final class DianaBurrows {
             return;
         }
         Kind kind = null;
-        if (type == ParticleTypes.ENCHANTED_HIT && p.getCount() == 4 && p.getMaxSpeed() == 0.01f && dists(p, 0.5f, 0.1f, 0.5f)) kind = Kind.START;
-        else if (type == ParticleTypes.CRIT && p.getCount() == 3 && p.getMaxSpeed() == 0.01f && dists(p, 0.5f, 0.1f, 0.5f)) kind = Kind.MOB;
-        else if (type == ParticleTypes.DRIPPING_LAVA && p.getCount() == 2 && p.getMaxSpeed() == 0.01f && dists(p, 0.35f, 0.1f, 0.35f)) kind = Kind.TREASURE;
+        if (type == ParticleTypes.ENCHANTED_HIT && p.count() == 4 && p.xMaxSpeed() == 0.01f && dists(p, 0.5f, 0.1f, 0.5f)) kind = Kind.START;
+        else if (type == ParticleTypes.CRIT && p.count() == 3 && p.xMaxSpeed() == 0.01f && dists(p, 0.5f, 0.1f, 0.5f)) kind = Kind.MOB;
+        else if (type == ParticleTypes.DRIPPING_LAVA && p.count() == 2 && p.xMaxSpeed() == 0.01f && dists(p, 0.35f, 0.1f, 0.35f)) kind = Kind.TREASURE;
         if (kind == null || wasRecentlyRemoved(pos)) return;
         registerBurrow(pos, kind, -1);
     }
@@ -493,9 +493,9 @@ public final class DianaBurrows {
 
     /** SBO's PreciseGuessBurrow: the spade's trail of lava particles, fitted with a curve and followed to the ground. */
     private static void spadeParticle(ClientboundLevelParticlesPacket p) {
-        if (p.getParticle().getType() != ParticleTypes.DRIPPING_LAVA || p.getCount() != 2 || p.getMaxSpeed() != -0.5f) return;
+        if (p.particle().getType() != ParticleTypes.DRIPPING_LAVA || p.count() != 2 || p.xMaxSpeed() != -0.5f) return;
         if (System.currentTimeMillis() - lastGuessTime > 3_000L) return;
-        Vec3 loc = new Vec3(p.getX(), p.getY(), p.getZ());
+        Vec3 loc = new Vec3(p.x(), p.y(), p.z());
         if (lavaParticles.isEmpty()) {
             lavaParticles.add(loc);
             return;
@@ -614,11 +614,11 @@ public final class DianaBurrows {
 
     /** SBO's ArrowGuessBurrow: the dust arrow after each burrow points at the next one. */
     private static void arrowParticle(ClientboundLevelParticlesPacket p) {
-        if (p.getParticle().getType() != ParticleTypes.DUST || !(p.getParticle() instanceof DustParticleOptions)) return;
-        if (p.getCount() != 0 || p.getMaxSpeed() != 1.0f) return;
-        Vec3 loc = new Vec3(p.getX(), p.getY(), p.getZ());
+        if (p.particle().getType() != ParticleTypes.DUST || !(p.particle() instanceof DustParticleOptions)) return;
+        if (p.count() != 0 || p.xMaxSpeed() != 1.0f) return;
+        Vec3 loc = new Vec3(p.x(), p.y(), p.z());
         if (lastWaypointClicked != null && loc.distanceTo(Vec3.atLowerCornerOf(lastWaypointClicked)) > 7) return;
-        int[] range = arrowRange(p.getXDist(), p.getYDist(), p.getZDist());
+        int[] range = arrowRange(p.xDist(), p.yDist(), p.zDist());
         if (range == null) return;
         arrowParticles.add(loc);
         Vec3[] ray = detectArrow();

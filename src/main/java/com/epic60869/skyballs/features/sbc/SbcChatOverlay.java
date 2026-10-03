@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.sbc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.mixin.SkyBallsChatComponentAccessor;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
@@ -12,7 +13,6 @@ import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -49,7 +49,7 @@ public final class SbcChatOverlay {
             if (!(screen instanceof ChatScreen)) return;
             barId = 0;
             ScreenMouseEvents.allowMouseClick(screen).register((s, event) -> {
-                if (event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return true;
+                if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) return true;
                 Button button = buttonAt(event.x(), event.y());
                 if (button == null) return true;
                 long id = barId;
@@ -59,7 +59,7 @@ public final class SbcChatOverlay {
             });
             // Escape with a reply pending cancels the reply first.
             ScreenKeyboardEvents.allowKeyPress(screen).register((s, event) -> {
-                if (event.key() != GLFW.GLFW_KEY_ESCAPE || SbcChat.replying() == null) return true;
+                if (event.key() != InputConstants.KEY_ESCAPE || SbcChat.replying() == null) return true;
                 SbcChat.cancelReply();
                 return true;
             });

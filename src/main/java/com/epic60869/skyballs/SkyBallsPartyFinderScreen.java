@@ -1,5 +1,7 @@
 package com.epic60869.skyballs;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import com.epic60869.skyballs.SkyBallsPartyFinder.Category;
 import com.epic60869.skyballs.SkyBallsPartyFinder.Listing;
 import com.epic60869.skyballs.SkyBallsPartyFinder.Member;
@@ -435,12 +437,12 @@ public final class SkyBallsPartyFinderScreen extends Screen {
 
         @Override
         protected boolean isValidClickButton(net.minecraft.client.input.MouseButtonInfo info) {
-            return info.button() == 0 || info.button() == 1;
+            return info.button() == InputConstants.MOUSE_BUTTON_LEFT || info.button() == InputConstants.MOUSE_BUTTON_RIGHT;
         }
 
         @Override
         public void onClick(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
-            step.accept(event.button() == 1 ? -1 : 1);
+            step.accept(event.button() == InputConstants.MOUSE_BUTTON_RIGHT ? -1 : 1);
         }
     }
 

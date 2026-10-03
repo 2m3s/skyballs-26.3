@@ -2,7 +2,6 @@ package com.epic60869.skyballs;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.DoubleBuffer;
@@ -65,20 +64,15 @@ public final class SkyBallsMouseReset {
         if (!storageGuiOpen) {
             // First selected storage GUI after coming from outside storage:
             // perform the actual Mouse Reset.
-            // GLFW works in window coordinates, not GUI-scaled ones (using those put the cursor near the
+            // The cursor works in window coordinates, not GUI-scaled ones (using those put the cursor near the
             // top-left corner at GUI scales above 1), so centre on the real window size.
-            try (MemoryStack stack = MemoryStack.stackPush()) {
-                java.nio.IntBuffer w = stack.mallocInt(1);
-                java.nio.IntBuffer h = stack.mallocInt(1);
-                GLFW.glfwGetWindowSize(window, w, h);
-                GLFW.glfwSetCursorPos(window, w.get(0) / 2.0, h.get(0) / 2.0);
-            }
+            com.epic60869.skyballs.custom.util.Input.setCursor(mc.getWindow().getScreenWidth() / 2.0, mc.getWindow().getScreenHeight() / 2.0);
         } else if (screen != lastStorageScreen && haveCursorPosition) {
             // Hypixel opened another storage screen. Do NOT reset to the
             // centre and do NOT accept the position restored by the new
             // Screen. Put the cursor back where it was in the previous
             // storage GUI.
-            GLFW.glfwSetCursorPos(window, lastCursorX, lastCursorY);
+            com.epic60869.skyballs.custom.util.Input.setCursor(lastCursorX, lastCursorY);
         }
 
         storageGuiOpen = true;
@@ -91,12 +85,9 @@ public final class SkyBallsMouseReset {
     }
 
     private static void readCursor(long window) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            DoubleBuffer x = stack.mallocDouble(1);
-            DoubleBuffer y = stack.mallocDouble(1);
-            GLFW.glfwGetCursorPos(window, x, y);
-            lastCursorX = x.get(0);
-            lastCursorY = y.get(0);
+        try {
+            lastCursorX = com.epic60869.skyballs.custom.util.Input.cursorX();
+            lastCursorY = com.epic60869.skyballs.custom.util.Input.cursorY();
             haveCursorPosition = true;
         } catch (Throwable ignored) {
             // If the cursor cannot be read, the normal storage GUI still works.

@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.sb.utils.waypoint.Waypoint;
 import com.epic60869.skyballs.features.fishing.FishingData;
 import com.google.gson.annotations.Expose;
@@ -1004,28 +1005,28 @@ public final class FeatureConfigs {
         @ConfigEditorBoolean
         public boolean loadoutEnabled = false;
 
-        @Expose @ConfigOption(name = "Wardrobe Slot 1 Key", desc = "Select slot 1 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_1) public int slot1Key = org.lwjgl.glfw.GLFW.GLFW_KEY_1;
-        @Expose @ConfigOption(name = "Wardrobe Slot 2 Key", desc = "Select slot 2 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_2) public int slot2Key = org.lwjgl.glfw.GLFW.GLFW_KEY_2;
-        @Expose @ConfigOption(name = "Wardrobe Slot 3 Key", desc = "Select slot 3 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_3) public int slot3Key = org.lwjgl.glfw.GLFW.GLFW_KEY_3;
-        @Expose @ConfigOption(name = "Wardrobe Slot 4 Key", desc = "Select slot 4 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_4) public int slot4Key = org.lwjgl.glfw.GLFW.GLFW_KEY_4;
-        @Expose @ConfigOption(name = "Wardrobe Slot 5 Key", desc = "Select slot 5 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_5) public int slot5Key = org.lwjgl.glfw.GLFW.GLFW_KEY_5;
-        @Expose @ConfigOption(name = "Wardrobe Slot 6 Key", desc = "Select slot 6 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_6) public int slot6Key = org.lwjgl.glfw.GLFW.GLFW_KEY_6;
-        @Expose @ConfigOption(name = "Wardrobe Slot 7 Key", desc = "Select slot 7 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_7) public int slot7Key = org.lwjgl.glfw.GLFW.GLFW_KEY_7;
-        @Expose @ConfigOption(name = "Wardrobe Slot 8 Key", desc = "Select slot 8 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_8) public int slot8Key = org.lwjgl.glfw.GLFW.GLFW_KEY_8;
-        @Expose @ConfigOption(name = "Wardrobe Slot 9 Key", desc = "Select slot 9 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_9) public int slot9Key = org.lwjgl.glfw.GLFW.GLFW_KEY_9;
+        @Expose @ConfigOption(name = "Wardrobe Slot 1 Key", desc = "Select slot 1 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_1) public int slot1Key = InputConstants.KEY_1;
+        @Expose @ConfigOption(name = "Wardrobe Slot 2 Key", desc = "Select slot 2 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_2) public int slot2Key = InputConstants.KEY_2;
+        @Expose @ConfigOption(name = "Wardrobe Slot 3 Key", desc = "Select slot 3 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_3) public int slot3Key = InputConstants.KEY_3;
+        @Expose @ConfigOption(name = "Wardrobe Slot 4 Key", desc = "Select slot 4 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_4) public int slot4Key = InputConstants.KEY_4;
+        @Expose @ConfigOption(name = "Wardrobe Slot 5 Key", desc = "Select slot 5 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_5) public int slot5Key = InputConstants.KEY_5;
+        @Expose @ConfigOption(name = "Wardrobe Slot 6 Key", desc = "Select slot 6 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_6) public int slot6Key = InputConstants.KEY_6;
+        @Expose @ConfigOption(name = "Wardrobe Slot 7 Key", desc = "Select slot 7 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_7) public int slot7Key = InputConstants.KEY_7;
+        @Expose @ConfigOption(name = "Wardrobe Slot 8 Key", desc = "Select slot 8 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_8) public int slot8Key = InputConstants.KEY_8;
+        @Expose @ConfigOption(name = "Wardrobe Slot 9 Key", desc = "Select slot 9 on the current Wardrobe page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_9) public int slot9Key = InputConstants.KEY_9;
 
-        @Expose @ConfigOption(name = "Loadout Slot 1 Key", desc = "Select loadout 1 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_1) public int loadoutSlot1Key = org.lwjgl.glfw.GLFW.GLFW_KEY_1;
-        @Expose @ConfigOption(name = "Loadout Slot 2 Key", desc = "Select loadout 2 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_2) public int loadoutSlot2Key = org.lwjgl.glfw.GLFW.GLFW_KEY_2;
-        @Expose @ConfigOption(name = "Loadout Slot 3 Key", desc = "Select loadout 3 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_3) public int loadoutSlot3Key = org.lwjgl.glfw.GLFW.GLFW_KEY_3;
-        @Expose @ConfigOption(name = "Loadout Slot 4 Key", desc = "Select loadout 4 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_4) public int loadoutSlot4Key = org.lwjgl.glfw.GLFW.GLFW_KEY_4;
-        @Expose @ConfigOption(name = "Loadout Slot 5 Key", desc = "Select loadout 5 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_5) public int loadoutSlot5Key = org.lwjgl.glfw.GLFW.GLFW_KEY_5;
-        @Expose @ConfigOption(name = "Loadout Slot 6 Key", desc = "Select loadout 6 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_6) public int loadoutSlot6Key = org.lwjgl.glfw.GLFW.GLFW_KEY_6;
-        @Expose @ConfigOption(name = "Loadout Slot 7 Key", desc = "Select loadout 7 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_7) public int loadoutSlot7Key = org.lwjgl.glfw.GLFW.GLFW_KEY_7;
-        @Expose @ConfigOption(name = "Loadout Slot 8 Key", desc = "Select loadout 8 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_8) public int loadoutSlot8Key = org.lwjgl.glfw.GLFW.GLFW_KEY_8;
-        @Expose @ConfigOption(name = "Loadout Slot 9 Key", desc = "Select loadout 9 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_9) public int loadoutSlot9Key = org.lwjgl.glfw.GLFW.GLFW_KEY_9;
-        @Expose @ConfigOption(name = "Loadout Slot 10 Key", desc = "Select loadout 10 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_0) public int loadoutSlot10Key = org.lwjgl.glfw.GLFW.GLFW_KEY_0;
-        @Expose @ConfigOption(name = "Loadout Slot 11 Key", desc = "Select loadout 11 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS) public int loadoutSlot11Key = org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
-        @Expose @ConfigOption(name = "Loadout Slot 12 Key", desc = "Select loadout 12 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL) public int loadoutSlot12Key = org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
+        @Expose @ConfigOption(name = "Loadout Slot 1 Key", desc = "Select loadout 1 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_1) public int loadoutSlot1Key = InputConstants.KEY_1;
+        @Expose @ConfigOption(name = "Loadout Slot 2 Key", desc = "Select loadout 2 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_2) public int loadoutSlot2Key = InputConstants.KEY_2;
+        @Expose @ConfigOption(name = "Loadout Slot 3 Key", desc = "Select loadout 3 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_3) public int loadoutSlot3Key = InputConstants.KEY_3;
+        @Expose @ConfigOption(name = "Loadout Slot 4 Key", desc = "Select loadout 4 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_4) public int loadoutSlot4Key = InputConstants.KEY_4;
+        @Expose @ConfigOption(name = "Loadout Slot 5 Key", desc = "Select loadout 5 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_5) public int loadoutSlot5Key = InputConstants.KEY_5;
+        @Expose @ConfigOption(name = "Loadout Slot 6 Key", desc = "Select loadout 6 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_6) public int loadoutSlot6Key = InputConstants.KEY_6;
+        @Expose @ConfigOption(name = "Loadout Slot 7 Key", desc = "Select loadout 7 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_7) public int loadoutSlot7Key = InputConstants.KEY_7;
+        @Expose @ConfigOption(name = "Loadout Slot 8 Key", desc = "Select loadout 8 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_8) public int loadoutSlot8Key = InputConstants.KEY_8;
+        @Expose @ConfigOption(name = "Loadout Slot 9 Key", desc = "Select loadout 9 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_9) public int loadoutSlot9Key = InputConstants.KEY_9;
+        @Expose @ConfigOption(name = "Loadout Slot 10 Key", desc = "Select loadout 10 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_0) public int loadoutSlot10Key = InputConstants.KEY_0;
+        @Expose @ConfigOption(name = "Loadout Slot 11 Key", desc = "Select loadout 11 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_MINUS) public int loadoutSlot11Key = InputConstants.KEY_MINUS;
+        @Expose @ConfigOption(name = "Loadout Slot 12 Key", desc = "Select loadout 12 on the current page.") @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_EQUALS) public int loadoutSlot12Key = InputConstants.KEY_EQUALS;
     }
 
     public static final class Runecrafting {
@@ -1516,23 +1517,23 @@ public final class FeatureConfigs {
 
         @Expose
         @ConfigOption(name = "Top Left Key", desc = "Leap to the teammate in the top left box.")
-        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_1)
-        public int keyTopLeft = org.lwjgl.glfw.GLFW.GLFW_KEY_1;
+        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_1)
+        public int keyTopLeft = InputConstants.KEY_1;
 
         @Expose
         @ConfigOption(name = "Top Right Key", desc = "Leap to the teammate in the top right box.")
-        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_2)
-        public int keyTopRight = org.lwjgl.glfw.GLFW.GLFW_KEY_2;
+        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_2)
+        public int keyTopRight = InputConstants.KEY_2;
 
         @Expose
         @ConfigOption(name = "Bottom Left Key", desc = "Leap to the teammate in the bottom left box.")
-        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_3)
-        public int keyBottomLeft = org.lwjgl.glfw.GLFW.GLFW_KEY_3;
+        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_3)
+        public int keyBottomLeft = InputConstants.KEY_3;
 
         @Expose
         @ConfigOption(name = "Bottom Right Key", desc = "Leap to the teammate in the bottom right box.")
-        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = org.lwjgl.glfw.GLFW.GLFW_KEY_4)
-        public int keyBottomRight = org.lwjgl.glfw.GLFW.GLFW_KEY_4;
+        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = InputConstants.KEY_4)
+        public int keyBottomRight = InputConstants.KEY_4;
 
         @Expose
         @ConfigOption(name = "Colored Boxes", desc = "Fill each box with the class colour. Off: dark boxes with class-coloured names.")

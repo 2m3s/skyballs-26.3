@@ -1,12 +1,12 @@
 package com.epic60869.skyballs;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
 
@@ -75,7 +75,7 @@ public final class SkyBallsNotesScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (event.hasControlDown() && event.key() == GLFW.GLFW_KEY_S) {
+        if (event.hasControlDown() && event.key() == InputConstants.KEY_S) {
             save();
             return true;
         }

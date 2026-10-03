@@ -186,7 +186,7 @@ public final class WitherDragons {
     public static void onParticle(ClientboundLevelParticlesPacket packet) {
         FeatureConfigs.WitherDragons config = config();
         if (config == null || !isDragonParticle(packet) || !inDragonPhase()) return;
-        Vec3 pos = new Vec3(packet.getX(), packet.getY(), packet.getZ());
+        Vec3 pos = new Vec3(packet.x(), packet.y(), packet.z());
         for (Dragon dragon : DRAGONS) {
             if (dragon.spawnTicks != 0 || !dragon.area.contains(pos)) continue;
             dragon.spawnTicks = 100;
@@ -208,9 +208,9 @@ public final class WitherDragons {
     }
 
     private static boolean isDragonParticle(ClientboundLevelParticlesPacket p) {
-        return p.getParticle().getType() == ParticleTypes.FLAME && p.getCount() == 20 && p.getY() == 19
-            && p.getXDist() == 2f && p.getYDist() == 3f && p.getZDist() == 2f && p.getMaxSpeed() == 0f
-            && p.getX() % 1 == 0 && p.getZ() % 1 == 0;
+        return p.particle().getType() == ParticleTypes.FLAME && p.count() == 20 && p.y() == 19
+            && p.xDist() == 2f && p.yDist() == 3f && p.zDist() == 2f && p.xMaxSpeed() == 0f
+            && p.x() % 1 == 0 && p.z() % 1 == 0;
     }
 
     /** Called from SkyBallsWitherDragonsMixin after an entity's data (health included) is updated. */

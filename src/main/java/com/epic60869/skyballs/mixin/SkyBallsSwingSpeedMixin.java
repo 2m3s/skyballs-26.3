@@ -11,7 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 /** Misc > Held Item > Swing: how long your own swing takes. High priority so it applies after other mods set it. */
 @Mixin(value = LivingEntity.class, priority = 2000)
 public abstract class SkyBallsSwingSpeedMixin {
-    @ModifyReturnValue(method = "getCurrentSwingDuration", at = @At("RETURN"))
+    // 26.3: vanilla works the duration out in getModifiedSwingDuration (getCurrentSwingDuration is gone).
+    @ModifyReturnValue(method = "getModifiedSwingDuration", at = @At("RETURN"))
     private int skyballs$swingDuration(int original) {
         return HeldItemSwing.duration((LivingEntity) (Object) this, original);
     }

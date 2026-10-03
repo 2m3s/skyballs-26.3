@@ -54,6 +54,7 @@
     "SkyBallsWorldNickMixin",
     "SkyBallsTextDisplayNickMixin",
     "SkyBallsHeldItemMixin",
+    "SkyBallsHeldItemUpdateMixin",
     "SkyBallsSwingSpeedMixin",
     "SkyBallsHeldItemTextureMixin",
     "SkyBallsHeldItemMiningMixin",

@@ -68,7 +68,7 @@ public final class SbcServer {
             ScreenMouseEvents.allowMouseClick(screen).register((s, event) -> {
                 Update u = update;
                 if (u == null || !u.required() || event.y() > 16) return true;
-                ConfirmLinkScreen.confirmLinkNow(s, u.url());
+                ConfirmLinkScreen.confirmLinkNow(s, java.net.URI.create(u.url()));
                 return false;
             });
         });

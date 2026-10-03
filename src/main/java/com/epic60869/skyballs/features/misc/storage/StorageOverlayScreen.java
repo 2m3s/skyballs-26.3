@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.epic60869.skyballs.features.misc.storage;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -23,7 +24,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
 import org.joml.Matrix3x2f;
 import org.joml.Vector2f;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 import java.util.List;
@@ -316,7 +316,7 @@ public class StorageOverlayScreen extends Screen {
         if (getScrollPanelInner().contains(mouseX, mouseY)) {
             StoragePageSlot[] clicked = new StoragePageSlot[1];
             layoutedForEach(StorageData.data(), (rect, page, inventory) -> {
-                if (rect.contains(mouseX, mouseY) && !page.equals(activePage) && click.button() == 0) clicked[0] = page;
+                if (rect.contains(mouseX, mouseY) && !page.equals(activePage) && click.button() == InputConstants.MOUSE_BUTTON_LEFT) clicked[0] = page;
             });
             if (clicked[0] != null) {
                 clicked[0].navigateTo();
@@ -357,7 +357,7 @@ public class StorageOverlayScreen extends Screen {
     @Override
     public boolean keyPressed(KeyEvent input) {
         if (searchField.isFocused()) {
-            if (input.key() == GLFW.GLFW_KEY_ESCAPE) {
+            if (input.key() == InputConstants.KEY_ESCAPE) {
                 searchField.setFocused(false);
                 if (host.getFocused() == searchField) host.setFocused(null);
                 return true;

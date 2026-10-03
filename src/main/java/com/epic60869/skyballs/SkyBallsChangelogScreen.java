@@ -1,5 +1,6 @@
 package com.epic60869.skyballs;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -181,7 +182,7 @@ public final class SkyBallsChangelogScreen extends Screen {
 
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent click, boolean doubled) {
-        if (maxScroll() > 0 && click.button() == 0) {
+        if (maxScroll() > 0 && click.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             int[] bar = barBounds();
             if (click.x() >= bar[0] - 2 && click.x() <= bar[0] + 5 && click.y() >= viewTop() && click.y() <= viewBottom()) {
                 draggingBar = true;
@@ -217,11 +218,11 @@ public final class SkyBallsChangelogScreen extends Screen {
     @Override
     public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
         // Left / right arrows switch versions.
-        if (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT) {
+        if (event.key() == InputConstants.KEY_LEFT) {
             show(index + 1);
             return true;
         }
-        if (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT) {
+        if (event.key() == InputConstants.KEY_RIGHT) {
             show(index - 1);
             return true;
         }

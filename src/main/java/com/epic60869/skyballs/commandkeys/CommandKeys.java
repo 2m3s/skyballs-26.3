@@ -64,7 +64,7 @@ public class CommandKeys {
     public static final KeyMapping.Category CATEGORY = com.epic60869.skyballs.SkyBallsKeyMappings.CATEGORY;
     public static final KeyMapping CONFIG_KEY = new KeyMapping(
             translationKey("key", "main.edit"),
-            InputConstants.Type.KEYSYM,
+            InputConstants.Type.KEYBOARD,
             InputConstants.KEY_K,
             CATEGORY
     );
@@ -95,7 +95,7 @@ public class CommandKeys {
         for (int i = 1; i <= macroKeyCount; i++) {
             KEYBINDS.add(new KeyMapping(
                     translationKey("key", String.format("main.macro.%02d", i)),
-                    InputConstants.Type.KEYSYM,
+                    InputConstants.Type.KEYBOARD,
                     InputConstants.UNKNOWN.getValue(),
                     CATEGORY
             ));

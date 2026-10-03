@@ -1,5 +1,7 @@
 package com.epic60869.skyballs.features.dungeons;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.features.FeatureConfigs;
 import com.epic60869.skyballs.features.core.SkyBallsLocation;
@@ -428,7 +430,7 @@ public final class OdinTerminals {
         if (x < 0 || y < 0 || x >= grid[2] || y >= grid[3]) return;
         int slot = noammSlotAt(type, x, y);
         if (slot >= type.windowSize) return;
-        int button = mouseButton == 1 ? 1 : 0;
+        int button = mouseButton == InputConstants.MOUSE_BUTTON_RIGHT ? 1 : 0;
         switch (handler.type()) {
             case NUMBERS -> {
                 // Only the next number, like NoammAddons.

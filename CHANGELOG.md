@@ -4,6 +4,8 @@ All notable changes to SkyBalls are listed here, newest first.
 
 ## 1.4 — 2026-10-03
 
+This build is for Minecraft 26.3 (Fabric Loader 0.19.5, Fabric API 0.161.0+26.3). Minecraft 26.3 uses SDL instead of GLFW for keyboard and mouse input, so key codes changed: keybinds you set in SkyBalls's own settings on 26.2 (not Minecraft's Controls) may need setting again.
+
 ### Added
 - Inquisitor Gamble (Diana, on by default): when an Inquisitor you dug up dies or you lootshare one, it gets shot on screen. A crosshair sways over its heart while a heartbeat speeds up, then the gun fires: through the heart with "CHIMERA!" if a Chimera dropped, past the body with "MISSED!" if not. Nothing spoils it: SkyBalls's HUDs are hidden while it plays, and the Chimera chat line, drop announcer, rare drop animations and achievement popups wait until it's over. /sb inqgamble hit|miss to preview it.
 - Item Protect (/sb protect): protect the held item from dropping; protection follows its UUID as it moves, and a star marks protected items. Slot binding remains available separately.

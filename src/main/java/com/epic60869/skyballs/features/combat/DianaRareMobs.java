@@ -819,8 +819,8 @@ public final class DianaRareMobs {
     /** Every particle packet (SkyBallsSlayerPacketsMixin): angry villager particles mark the lynx that can be hit. */
     public static void onParticle(ClientboundLevelParticlesPacket packet) {
         FeatureConfigs.Diana config = config();
-        if (config == null || !config.lynxHighlight || packet.getParticle().getType() != ParticleTypes.ANGRY_VILLAGER || !onHub()) return;
-        lynxParticles.add(Map.entry(new Vec3(packet.getX(), packet.getY(), packet.getZ()), System.currentTimeMillis()));
+        if (config == null || !config.lynxHighlight || packet.particle().getType() != ParticleTypes.ANGRY_VILLAGER || !onHub()) return;
+        lynxParticles.add(Map.entry(new Vec3(packet.x(), packet.y(), packet.z()), System.currentTimeMillis()));
     }
 
     /**

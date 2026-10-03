@@ -86,9 +86,9 @@ public final class HeldItemTransforms {
     }
 
     static void applyRotation(PoseStack pose, HeldItemTransform transform) {
-        if (transform.rotationX != 0f) pose.mulPose(Axis.XP.rotationDegrees(transform.rotationX));
-        if (transform.rotationY != 0f) pose.mulPose(Axis.YP.rotationDegrees(transform.rotationY));
-        if (transform.rotationZ != 0f) pose.mulPose(Axis.ZP.rotationDegrees(transform.rotationZ));
+        if (transform.rotationX != 0f) pose.rotate(Axis.XP.rotationDegrees(transform.rotationX));
+        if (transform.rotationY != 0f) pose.rotate(Axis.YP.rotationDegrees(transform.rotationY));
+        if (transform.rotationZ != 0f) pose.rotate(Axis.ZP.rotationDegrees(transform.rotationZ));
     }
 
     // HeldItemPositionMath

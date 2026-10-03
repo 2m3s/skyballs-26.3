@@ -41,7 +41,7 @@ public final class SkyBallsKeyMappings {
         SEARCH = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
                 "key.skyballs.search",
-                InputConstants.Type.KEYSYM,
+                InputConstants.Type.KEYBOARD,
                 InputConstants.KEY_O,
                 CATEGORY
             )
@@ -50,7 +50,7 @@ public final class SkyBallsKeyMappings {
         SHARE_ITEM = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
                 "key.skyballs.share_item",
-                InputConstants.Type.KEYSYM,
+                InputConstants.Type.KEYBOARD,
                 InputConstants.UNKNOWN.getValue(),
                 CATEGORY
             )
@@ -59,13 +59,13 @@ public final class SkyBallsKeyMappings {
         com.epic60869.skyballs.features.misc.ToggleSprint.registerKey();
 
         DIANA_GUESS_WARP = KeyMappingHelper.registerKeyMapping(
-            new KeyMapping("key.skyballs.diana_guess_warp", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
+            new KeyMapping("key.skyballs.diana_guess_warp", InputConstants.Type.KEYBOARD, InputConstants.UNKNOWN.getValue(), CATEGORY));
         DIANA_RARE_MOB_WARP = KeyMappingHelper.registerKeyMapping(
-            new KeyMapping("key.skyballs.diana_rare_mob_warp", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
+            new KeyMapping("key.skyballs.diana_rare_mob_warp", InputConstants.Type.KEYBOARD, InputConstants.UNKNOWN.getValue(), CATEGORY));
         DIANA_SPHINX_SOLVER = KeyMappingHelper.registerKeyMapping(
-            new KeyMapping("key.skyballs.diana_sphinx_solver", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
+            new KeyMapping("key.skyballs.diana_sphinx_solver", InputConstants.Type.KEYBOARD, InputConstants.UNKNOWN.getValue(), CATEGORY));
         SLAYER_BOSS_SELECT = KeyMappingHelper.registerKeyMapping(
-            new KeyMapping("key.skyballs.slayer_boss_select", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
+            new KeyMapping("key.skyballs.slayer_boss_select", InputConstants.Type.KEYBOARD, InputConstants.UNKNOWN.getValue(), CATEGORY));
 
         initialized = true;
     }

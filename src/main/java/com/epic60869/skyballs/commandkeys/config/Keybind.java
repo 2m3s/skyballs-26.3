@@ -22,7 +22,6 @@ import com.google.gson.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.commandkeys.util.JsonUtil;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.glfw.GLFW;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -103,13 +102,9 @@ public class Keybind {
         if (key.equals(InputConstants.UNKNOWN))
             return false;
         if (key.getType().equals(InputConstants.Type.MOUSE)) {
-            return GLFW.glfwGetMouseButton(
-                    Minecraft.getInstance().getWindow().handle(),
-                    key.getValue()
-            ) == 1;
+            return com.epic60869.skyballs.custom.util.Input.mouseDown(key.getValue());
         } else {
-            return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().handle(), key.getValue())
-                    == 1;
+            return com.epic60869.skyballs.custom.util.Input.keyDown(key.getValue());
         }
     }
 

@@ -22,7 +22,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 
 import java.nio.charset.StandardCharsets;
@@ -134,7 +134,7 @@ public final class ZealotCounter {
         });
 
         AttackEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
-            if (level.isClientSide() && enabled() && entity instanceof EnderMan) HIT_BY_YOU.put(entity.getId(), System.currentTimeMillis());
+            if (level.isClientSide() && enabled() && entity instanceof Enderman) HIT_BY_YOU.put(entity.getId(), System.currentTimeMillis());
             return InteractionResult.PASS;
         });
         UseItemCallback.EVENT.register((player, level, hand) -> {
@@ -241,7 +241,7 @@ public final class ZealotCounter {
     // ----- Kill detection -----
 
     private static boolean isZealot(Minecraft mc, Entity entity) {
-        return entity instanceof EnderMan && !mc.level.getEntitiesOfClass(ArmorStand.class, entity.getBoundingBox().inflate(0.5, 3, 0.5),
+        return entity instanceof Enderman && !mc.level.getEntitiesOfClass(ArmorStand.class, entity.getBoundingBox().inflate(0.5, 3, 0.5),
             stand -> stand.hasCustomName() && stand.getCustomName().getString().contains("Zealot")).isEmpty();
     }
 
@@ -264,19 +264,19 @@ public final class ZealotCounter {
 
         if (witherImpactTicks > 0) {
             witherImpactTicks--;
-            for (EnderMan enderman : mc.level.getEntitiesOfClass(EnderMan.class, mc.player.getBoundingBox().inflate(WITHER_IMPACT_RANGE), e -> true)) {
+            for (Enderman enderman : mc.level.getEntitiesOfClass(Enderman.class, mc.player.getBoundingBox().inflate(WITHER_IMPACT_RANGE), e -> true)) {
                 HIT_BY_YOU.put(enderman.getId(), now);
             }
         }
         // Your arrows mark the Zealots they reach.
         for (AbstractArrow arrow : mc.level.getEntitiesOfClass(AbstractArrow.class, mc.player.getBoundingBox().inflate(64),
                 a -> a.getOwner() == mc.player)) {
-            for (EnderMan enderman : mc.level.getEntitiesOfClass(EnderMan.class, arrow.getBoundingBox().inflate(1.5), e -> true)) {
+            for (Enderman enderman : mc.level.getEntitiesOfClass(Enderman.class, arrow.getBoundingBox().inflate(1.5), e -> true)) {
                 HIT_BY_YOU.put(enderman.getId(), now);
             }
         }
         // Zealots whose health reached zero; this also catches several killed at once.
-        for (EnderMan enderman : mc.level.getEntitiesOfClass(EnderMan.class, mc.player.getBoundingBox().inflate(32), e -> true)) {
+        for (Enderman enderman : mc.level.getEntitiesOfClass(Enderman.class, mc.player.getBoundingBox().inflate(32), e -> true)) {
             if (enderman.isDeadOrDying()) countIfYours(mc, enderman);
         }
         HIT_BY_YOU.values().removeIf(at -> now - at > HIT_MEMORY_MS);
@@ -300,7 +300,7 @@ public final class ZealotCounter {
     /** Called when the server says an entity died. */
     public static void onEntityDeath(Entity entity) {
         Minecraft mc = Minecraft.getInstance();
-        if (!(entity instanceof EnderMan) || mc.player == null || mc.level == null || !enabled()) return;
+        if (!(entity instanceof Enderman) || mc.player == null || mc.level == null || !enabled()) return;
         countIfYours(mc, entity);
     }
 

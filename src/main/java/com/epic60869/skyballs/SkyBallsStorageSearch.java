@@ -203,8 +203,8 @@ public final class SkyBallsStorageSearch {
         capturePlayerInventory(mc);
         applyPendingHighlight(mc);
 
-        boolean ctrl = InputConstants.isKeyDown(mc.getWindow(), InputConstants.KEY_LCONTROL) || InputConstants.isKeyDown(mc.getWindow(), InputConstants.KEY_RCONTROL);
-        boolean f = InputConstants.isKeyDown(mc.getWindow(), InputConstants.KEY_F);
+        boolean ctrl = InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) || InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
+        boolean f = InputConstants.isKeyDown(InputConstants.KEY_F);
         boolean open = ctrl && f;
 
         if (open && !previousOpenKey && mc.gui.screen() == null && isHypixel(mc)) {

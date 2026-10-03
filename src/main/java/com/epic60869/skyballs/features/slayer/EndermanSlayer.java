@@ -20,7 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -47,7 +47,7 @@ public final class EndermanSlayer {
     /** A Yang Glyph explodes five seconds after it lands. */
     private static final long BEACON_FUSE_MS = 5_000L;
 
-    private static final Set<EnderMan> endermenWithBeacons = new HashSet<>();
+    private static final Set<Enderman> endermenWithBeacons = new HashSet<>();
     private static final Set<ArmorStand> flyingBeacons = new HashSet<>();
     private static final Set<ArmorStand> nukekubiSkulls = new HashSet<>();
     private static final Map<BlockPos, Long> sittingBeacons = new HashMap<>();
@@ -117,7 +117,7 @@ public final class EndermanSlayer {
 
         for (Entity entity : mc.level.entitiesForRendering()) {
             if (entity.distanceToSqr(mc.player) > 40 * 40) continue;
-            if (beacons && entity instanceof EnderMan enderman && !endermenWithBeacons.contains(enderman)
+            if (beacons && entity instanceof Enderman enderman && !endermenWithBeacons.contains(enderman)
                 && hasBeacon(enderman) && canSee(mc, enderman, 15)) {
                 endermenWithBeacons.add(enderman);
             }
@@ -162,7 +162,7 @@ public final class EndermanSlayer {
         return null;
     }
 
-    private static boolean hasBeacon(EnderMan enderman) {
+    private static boolean hasBeacon(Enderman enderman) {
         var carried = enderman.getCarriedBlock();
         return carried != null && carried.is(Blocks.BEACON);
     }
@@ -189,7 +189,7 @@ public final class EndermanSlayer {
 
         if (config.lineToBoss) {
             LivingEntity boss = SlayerFeatures.boss();
-            if (boss instanceof EnderMan && canSee(mc, boss, 30)) {
+            if (boss instanceof Enderman && canSee(mc, boss, 30)) {
                 collector.submitLineFromCursor(boss.getPosition(partial).add(0, 1, 0), new float[]{0.33f, 1f, 1f}, 1f, config.bossLineWidth);
             }
         }
@@ -198,7 +198,7 @@ public final class EndermanSlayer {
         float[] beaconColour = colour(config.beaconColor);
         float[] lineColour = colour(config.beaconLineColor);
         if (config.highlightBeacon) {
-            for (EnderMan enderman : endermenWithBeacons) {
+            for (Enderman enderman : endermenWithBeacons) {
                 Vec3 pos = enderman.getPosition(partial);
                 collector.submitFilledBox(new AABB(pos.x - 0.5, pos.y + 0.2, pos.z - 0.5, pos.x + 0.5, pos.y + 1.2, pos.z + 0.5), beaconColour, 0.5f, false);
             }
@@ -236,12 +236,12 @@ public final class EndermanSlayer {
     public static boolean hideParticle(ClientboundLevelParticlesPacket packet) {
         FeatureConfigs.EndermanSlayer config = config();
         if (config == null || !config.hideParticles || !inEnd()) return false;
-        ParticleType<?> type = packet.getParticle().getType();
+        ParticleType<?> type = packet.particle().getType();
         if (type != ParticleTypes.LARGE_SMOKE && type != ParticleTypes.FLAME && type != ParticleTypes.WITCH) return false;
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return false;
-        AABB area = new AABB(packet.getX() - 3, packet.getY() - 3, packet.getZ() - 3, packet.getX() + 3, packet.getY() + 3, packet.getZ() + 3);
-        return !mc.level.getEntitiesOfClass(EnderMan.class, area).isEmpty();
+        AABB area = new AABB(packet.x() - 3, packet.y() - 3, packet.z() - 3, packet.x() + 3, packet.y() + 3, packet.z() + 3);
+        return !mc.level.getEntitiesOfClass(Enderman.class, area).isEmpty();
     }
 
     private static int rgb(String value) {

@@ -27,7 +27,7 @@ public final class ToggleSprint {
 
     /** Must run during client init, before the options are loaded. */
     public static void registerKey() {
-        key = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.skyballs.toggle_sprint", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), SkyBallsKeyMappings.CATEGORY));
+        key = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.skyballs.toggle_sprint", InputConstants.Type.KEYBOARD, InputConstants.UNKNOWN.getValue(), SkyBallsKeyMappings.CATEGORY));
     }
 
     public static void init() {

@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.misc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.custom.RepoItems;
 import com.epic60869.skyballs.mixin.SkyBallsMultiLineEditBoxAccessor;
@@ -13,7 +14,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,20 +134,20 @@ public final class ItemNotificationScreen extends Screen {
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (!suggestions.isEmpty()) {
-            if (event.key() == GLFW.GLFW_KEY_TAB) {
+            if (event.key() == InputConstants.KEY_TAB) {
                 accept(suggestions.get(selected));
                 return true;
             }
-            if (event.key() == GLFW.GLFW_KEY_DOWN && event.hasControlDown() || event.key() == GLFW.GLFW_KEY_DOWN && isAtSuggestions()) {
+            if (event.key() == InputConstants.KEY_DOWN && event.hasControlDown() || event.key() == InputConstants.KEY_DOWN && isAtSuggestions()) {
                 selected = (selected + 1) % suggestions.size();
                 return true;
             }
-            if (event.key() == GLFW.GLFW_KEY_UP && (event.hasControlDown() || isAtSuggestions())) {
+            if (event.key() == InputConstants.KEY_UP && (event.hasControlDown() || isAtSuggestions())) {
                 selected = (selected + suggestions.size() - 1) % suggestions.size();
                 return true;
             }
         }
-        if (event.hasControlDown() && event.key() == GLFW.GLFW_KEY_S) {
+        if (event.hasControlDown() && event.key() == InputConstants.KEY_S) {
             save();
             return true;
         }

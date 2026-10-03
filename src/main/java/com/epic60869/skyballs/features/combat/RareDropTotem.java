@@ -67,7 +67,7 @@ public final class RareDropTotem {
         if (stack.isEmpty() || stack.is(Items.BARRIER)) return;
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> {
-            mc.gameRenderer.displayItemActivation(stack);
+            if (mc.player != null) mc.player.displayItemActivation(stack);
             if (mc.player != null) {
                 mc.particleEngine.createTrackingEmitter(mc.player, ParticleTypes.SCRAPE, 30);
                 mc.player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1, 1f);

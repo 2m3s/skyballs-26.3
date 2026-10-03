@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.misc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.custom.util.Compat;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -45,7 +46,7 @@ public final class WardrobeHotkeys {
                 config.misc.wardrobeHotkeys.slot9Key
             };
             for (int i = 0; i < keys.length; i++) {
-                if (key != keys[i] || key == org.lwjgl.glfw.GLFW.GLFW_KEY_UNKNOWN) continue;
+                if (key != keys[i] || key == InputConstants.UNKNOWN.getValue()) continue;
                 clickSlot(screen, 36 + i);
                 return true;
             }
@@ -67,7 +68,7 @@ public final class WardrobeHotkeys {
                 config.misc.wardrobeHotkeys.loadoutSlot12Key
             };
             for (int i = 0; i < keys.length; i++) {
-                if (key != keys[i] || key == org.lwjgl.glfw.GLFW.GLFW_KEY_UNKNOWN) continue;
+                if (key != keys[i] || key == InputConstants.UNKNOWN.getValue()) continue;
                 clickSlot(screen, LOADOUT_MENU_SLOTS[i]);
                 return true;
             }

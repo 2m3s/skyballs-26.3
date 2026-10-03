@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.misc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.SkyBallsStaff;
 import com.epic60869.skyballs.mixin.SkyBallsChatComponentAccessor;
@@ -14,7 +15,6 @@ import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public final class CopyChat {
             });
             ScreenKeyboardEvents.allowKeyPress(screen).register((s, event) -> {
                 SkyBallsConfig.CopyChat c = config();
-                if (c == null || !c.enabled || c.copyMessageKey <= 9 || c.copyMessageKey == GLFW.GLFW_KEY_UNKNOWN || event.key() != c.copyMessageKey) return true;
+                if (c == null || !c.enabled || com.epic60869.skyballs.custom.util.Input.bindMouseButton(c.copyMessageKey) != -1 || c.copyMessageKey == InputConstants.UNKNOWN.getValue() || event.key() != c.copyMessageKey) return true;
                 Minecraft mc = Minecraft.getInstance();
                 double x = mc.mouseHandler.getScaledXPos(mc.getWindow());
                 double y = mc.mouseHandler.getScaledYPos(mc.getWindow());
@@ -94,7 +94,7 @@ public final class CopyChat {
     /** The plain text of the chat message under the mouse, like NoFrills' getHoveredMsg. */
     /** A key bound to a mouse button: MoulConfig uses 0-9 for mouse buttons (older versions -100 + button). */
     private static boolean isMouseBind(int bind, int button) {
-        return bind == button || bind == -100 + button;
+        return com.epic60869.skyballs.custom.util.Input.isMouseBind(bind, button);
     }
 
     private record DrawnLine(FormattedCharSequence content, float top, float bottom) {}

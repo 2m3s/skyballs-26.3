@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.misc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.custom.util.Compat;
 import com.epic60869.skyballs.mixin.SkyBallsContainerScreenAccessor;
@@ -16,7 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * Item protection and slot binding. Protected items cannot be dropped; binding turns a shift-click into the same swap
@@ -157,7 +157,7 @@ public final class SlotLocking {
 
     private static boolean keyPressed(AbstractContainerScreen<?> screen, int key) {
         SkyBallsConfig.SlotLocking c = config();
-        if (c == null || !c.enabled || key == GLFW.GLFW_KEY_UNKNOWN) return false;
+        if (c == null || !c.enabled || key == InputConstants.UNKNOWN.getValue()) return false;
         Slot hovered = ((SkyBallsContainerScreenAccessor) screen).skyballs$getHoveredSlot();
         if (key == c.bindKey && screen instanceof InventoryScreen) {
             if (hovered == null || hovered.index < 5 || hovered.index >= 45) return false;

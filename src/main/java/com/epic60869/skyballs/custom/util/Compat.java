@@ -67,7 +67,7 @@ public final class Compat {
 			.append(Component.literal("SB").withStyle(ChatFormatting.AQUA))
 			.append(Component.literal("] ").withStyle(ChatFormatting.GRAY));
 
-	private static final HolderLookup.Provider LOOKUP = VanillaRegistries.createLookup();
+	private static final HolderLookup.Provider LOOKUP = VanillaRegistries.createWorldLookup();
 	private static @Nullable Screen queuedScreen;
 	private static boolean queued;
 

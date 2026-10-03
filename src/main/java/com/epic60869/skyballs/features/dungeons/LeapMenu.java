@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.dungeons;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.features.FeatureConfigs;
 import com.epic60869.skyballs.features.core.SkyBallsAlerts;
@@ -187,7 +188,7 @@ public final class LeapMenu {
     /** Which box a key leaps to (0 top left, 1 top right, 2 bottom left, 3 bottom right), or -1. */
     private static int quadrantFor(int key) {
         FeatureConfigs.LeapMenu config = config();
-        if (config == null || key == org.lwjgl.glfw.GLFW.GLFW_KEY_UNKNOWN) return -1;
+        if (config == null || key == InputConstants.UNKNOWN.getValue()) return -1;
         if (key == config.keyTopLeft) return 0;
         if (key == config.keyTopRight) return 1;
         if (key == config.keyBottomLeft) return 2;
@@ -204,8 +205,8 @@ public final class LeapMenu {
             case 2 -> config.keyBottomLeft;
             default -> config.keyBottomRight;
         };
-        if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_UNKNOWN) return "";
-        String name = org.lwjgl.glfw.GLFW.glfwGetKeyName(key, 0);
+        if (key == InputConstants.UNKNOWN.getValue()) return "";
+        String name = com.epic60869.skyballs.custom.util.Input.keyName(key);
         return name == null ? "" : name.toUpperCase(java.util.Locale.ROOT);
     }
 

@@ -1,12 +1,12 @@
 package com.epic60869.skyballs;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.Config;
 import io.github.notenoughupdates.moulconfig.annotations.Category;
 import io.github.notenoughupdates.moulconfig.annotations.Accordion;
-import org.lwjgl.glfw.GLFW;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorText;
@@ -699,23 +699,23 @@ public final class SkyBallsConfig extends Config {
 
         @Expose
         @ConfigOption(name = "Move Up Key", desc = "Move the hovered tooltip up.")
-        @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_PAGE_UP)
-        public int moveUpKey = GLFW.GLFW_KEY_PAGE_UP;
+        @ConfigEditorKeybind(defaultKey = InputConstants.KEY_PAGEUP)
+        public int moveUpKey = InputConstants.KEY_PAGEUP;
 
         @Expose
         @ConfigOption(name = "Move Down Key", desc = "Move the hovered tooltip down.")
-        @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_PAGE_DOWN)
-        public int moveDownKey = GLFW.GLFW_KEY_PAGE_DOWN;
+        @ConfigEditorKeybind(defaultKey = InputConstants.KEY_PAGEDOWN)
+        public int moveDownKey = InputConstants.KEY_PAGEDOWN;
 
         @Expose
         @ConfigOption(name = "Horizontal Movement Key", desc = "Hold this key to make up and down movement horizontal.")
-        @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_UNKNOWN)
-        public int horizontalMovementKey = GLFW.GLFW_KEY_UNKNOWN;
+        @ConfigEditorKeybind(defaultKey = -1)
+        public int horizontalMovementKey = InputConstants.UNKNOWN.getValue();
 
         @Expose
         @ConfigOption(name = "Reset Tooltip Key", desc = "Reset the hovered tooltip's moved position.")
-        @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_UNKNOWN)
-        public int resetTooltipKey = GLFW.GLFW_KEY_UNKNOWN;
+        @ConfigEditorKeybind(defaultKey = -1)
+        public int resetTooltipKey = InputConstants.UNKNOWN.getValue();
 
         @Expose
         @ConfigOption(name = "Start On Top", desc = "Show the top of oversized tooltips when they first appear.")
@@ -767,8 +767,8 @@ public final class SkyBallsConfig extends Config {
 
         @Expose
         @ConfigOption(name = "Bind Key", desc = "In your inventory: press over a slot, then over another (one in the hotbar), to bind them. Press on a bound slot to unbind.")
-        @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_B)
-        public int bindKey = GLFW.GLFW_KEY_B;
+        @ConfigEditorKeybind(defaultKey = InputConstants.KEY_B)
+        public int bindKey = InputConstants.KEY_B;
 
         @Expose
         @ConfigOption(name = "Bind Line Only With Shift", desc = "Only show the line between bound slots while holding Shift.")
@@ -815,8 +815,8 @@ public final class SkyBallsConfig extends Config {
         /** A keyboard key, or a mouse button stored the MoulConfig way (-100 + button; right click is -99). */
         @Expose
         @ConfigOption(name = "Copy Message Key", desc = "Key or mouse button that copies the message under the mouse while chat is open. Right click by default.")
-        @ConfigEditorKeybind(defaultKey = -100 + GLFW.GLFW_MOUSE_BUTTON_RIGHT)
-        public int copyMessageKey = -100 + GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+        @ConfigEditorKeybind(defaultKey = -99)
+        public int copyMessageKey = -99;
 
         @Expose
         @ConfigOption(name = "Copy Preview", desc = "Show what was copied in chat.")

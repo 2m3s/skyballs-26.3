@@ -28,13 +28,13 @@ public final class HeldItemSwing {
     /** How long your own swing takes, in ticks. */
     public static int duration(LivingEntity entity, int vanillaDuration) {
         if (entity != Minecraft.getInstance().player) return vanillaDuration;
-        InteractionHand hand = entity.swingingArm != null ? entity.swingingArm : InteractionHand.MAIN_HAND;
+        InteractionHand hand = entity.getCurrentSwing() != null ? entity.getCurrentSwing().hand() : InteractionHand.MAIN_HAND;
         ItemStack stack = entity.getItemInHand(hand);
         if (!HeldItemTransforms.isEligible(stack)) return vanillaDuration;
         HeldItemConfig config = HeldItemTransforms.config();
         if (config == null || !config.enabled) return vanillaDuration;
         HeldItemTransform transform = HeldItemTransforms.effectiveTransform(stack);
-        return adjustedDuration(vanillaDuration, stack.getSwingAnimation().duration(), transform.swingSpeed,
+        return adjustedDuration(vanillaDuration, stack.getAttackAnimation().duration(), transform.swingSpeed,
             config.settings.ignoresMiningEffects);
     }
 
@@ -67,7 +67,7 @@ public final class HeldItemSwing {
         if (config == null || !config.enabled) return;
         HeldItemTransform transform = HeldItemTransforms.effectiveTransform(stack);
         if (transform.swingStyle == HeldItemTransform.SwingStyle.ITEM_ONLY
-            && stack.getSwingAnimation().type() == SwingAnimationType.WHACK) {
+            && stack.getAttackAnimation().type() == SwingAnimationType.WHACK) {
             itemOnlySwing = new ItemOnlySwing(stack, attack, arm, new boolean[1]);
         }
     }
@@ -91,14 +91,14 @@ public final class HeldItemSwing {
         float direction = arm == HumanoidArm.RIGHT ? 1f : -1f;
         float arc = (float) Math.sin(Math.sqrt(attack) * Math.PI);
         float twist = (float) Math.sin(attack * attack * Math.PI);
-        pose.mulPose(Axis.YP.rotationDegrees(direction * twist * SWING_Y_DEGREES));
-        pose.mulPose(Axis.ZP.rotationDegrees(direction * arc * SWING_Z_DEGREES));
-        pose.mulPose(Axis.XP.rotationDegrees(arc * SWING_X_DEGREES));
+        pose.rotate(Axis.YP.rotationDegrees(direction * twist * SWING_Y_DEGREES));
+        pose.rotate(Axis.ZP.rotationDegrees(direction * arc * SWING_Z_DEGREES));
+        pose.rotate(Axis.XP.rotationDegrees(arc * SWING_X_DEGREES));
     }
 
     /** The editor's "Preview swing" button. */
     static void preview() {
         var player = Minecraft.getInstance().player;
-        if (player != null) player.swing(InteractionHand.MAIN_HAND, false);
+        if (player != null) player.swing(InteractionHand.MAIN_HAND, player.getMainHandItem().getAttackAnimation(), false);
     }
 }

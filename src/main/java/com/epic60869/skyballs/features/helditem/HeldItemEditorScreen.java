@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 package com.epic60869.skyballs.features.helditem;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -18,7 +19,6 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -130,14 +130,14 @@ public final class HeldItemEditorScreen {
         @Override
         public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
             int button = click.button();
-            if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT && button != GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+            if (button != InputConstants.MOUSE_BUTTON_LEFT && button != InputConstants.MOUSE_BUTTON_RIGHT) {
                 return super.mouseClicked(click, doubled);
             }
             if (!openingAnimation.isComplete()) return true;
             int mouseX = (int) click.x();
             int mouseY = (int) click.y();
             if (disabledOverlay.isEditingBlocked(config().enabled)) {
-                if (!config().enabled && button == GLFW.GLFW_MOUSE_BUTTON_LEFT
+                if (!config().enabled && button == InputConstants.MOUSE_BUTTON_LEFT
                     && DisabledOverlay.toggleBounds(width, height).contains(mouseX, mouseY)) {
                     click(() -> {
                         config().enabled = true;
@@ -159,7 +159,7 @@ public final class HeldItemEditorScreen {
             }
             DragKind drag = dragKind;
             if (drag == null) return super.mouseDragged(click, deltaX, deltaY);
-            int expected = drag == DragKind.MOVE_DEPTH ? GLFW.GLFW_MOUSE_BUTTON_RIGHT : GLFW.GLFW_MOUSE_BUTTON_LEFT;
+            int expected = drag == DragKind.MOVE_DEPTH ? InputConstants.MOUSE_BUTTON_RIGHT : InputConstants.MOUSE_BUTTON_LEFT;
             if (click.button() != expected) return super.mouseDragged(click, deltaX, deltaY);
             int mouseX = (int) click.x();
             int mouseY = (int) click.y();
@@ -198,7 +198,7 @@ public final class HeldItemEditorScreen {
                 return true;
             }
             int button = click.button();
-            if ((button == GLFW.GLFW_MOUSE_BUTTON_LEFT || button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) && dragKind != null) {
+            if ((button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT) && dragKind != null) {
                 history.commitGesture();
                 cancelDrag();
                 saveChanges();
@@ -228,11 +228,11 @@ public final class HeldItemEditorScreen {
             if (disabledOverlay.isEditingBlocked(config().enabled)) return super.keyPressed(event);
             int key = event.key();
             // 1-9 pick a hotbar slot, to edit another item without closing the editor.
-            if (key >= GLFW.GLFW_KEY_1 && key <= GLFW.GLFW_KEY_9) {
+            if (key >= InputConstants.KEY_1 && key <= InputConstants.KEY_9) {
                 history.flushPending();
                 cancelDrag();
                 var player = Minecraft.getInstance().player;
-                if (player != null) player.getInventory().setSelectedSlot(key - GLFW.GLFW_KEY_1);
+                if (player != null) player.getInventory().setSelectedSlot(key - InputConstants.KEY_1);
                 return true;
             }
             return super.keyPressed(event);
@@ -258,7 +258,7 @@ public final class HeldItemEditorScreen {
         }
 
         private void processClick(int mouseX, int mouseY, int button) {
-            boolean left = button == GLFW.GLFW_MOUSE_BUTTON_LEFT;
+            boolean left = button == InputConstants.MOUSE_BUTTON_LEFT;
             if (left && layout.previewButtonBounds().contains(mouseX, mouseY)) {
                 click(HeldItemSwing::preview);
             } else if (left && layout.closeBounds().contains(mouseX, mouseY)) {

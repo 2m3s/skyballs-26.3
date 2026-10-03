@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.InputConstants;
-import org.lwjgl.glfw.GLFW;
 
 import com.epic60869.skyballs.commandkeys.config.Config;
 import com.epic60869.skyballs.commandkeys.config.Macro;
@@ -81,23 +80,23 @@ public final class SkyBallsCommandKeysMigration {
             profile.setConflictStrategy(macro, Macro.ConflictStrategy.valueOf(string(old, "conflict", "ASSERT")));
         } catch (IllegalArgumentException ignored) {}
 
-        int keyCode = old.has("keyCode") ? old.get("keyCode").getAsInt() : GLFW.GLFW_KEY_UNKNOWN;
-        if (keyCode != GLFW.GLFW_KEY_UNKNOWN) {
+        int keyCode = old.has("keyCode") ? old.get("keyCode").getAsInt() : InputConstants.UNKNOWN.getValue();
+        if (keyCode != InputConstants.UNKNOWN.getValue()) {
             boolean mouse = old.has("mouseButton") && old.get("mouseButton").getAsBoolean();
-            InputConstants.Key key = (mouse ? InputConstants.Type.MOUSE : InputConstants.Type.KEYSYM).getOrCreate(keyCode);
+            InputConstants.Key key = (mouse ? InputConstants.Type.MOUSE : InputConstants.Type.KEYBOARD).getOrCreate(keyCode);
             profile.setKey(macro, macro.getKeybind(), key);
         }
 
-        // The old system stored a GLFW modifier bitmask; CommandKeys uses a limit key instead.
+        // The old system stored a GLFW modifier bitmask (shift 1, control 2, alt 4, super 8); CommandKeys uses a limit key instead.
         int modifierKey = switch (old.has("modifier") ? old.get("modifier").getAsInt() : 0) {
-            case GLFW.GLFW_MOD_SHIFT -> GLFW.GLFW_KEY_LEFT_SHIFT;
-            case GLFW.GLFW_MOD_CONTROL -> GLFW.GLFW_KEY_LEFT_CONTROL;
-            case GLFW.GLFW_MOD_ALT -> GLFW.GLFW_KEY_LEFT_ALT;
-            case GLFW.GLFW_MOD_SUPER -> GLFW.GLFW_KEY_LEFT_SUPER;
-            default -> GLFW.GLFW_KEY_UNKNOWN;
+            case 1 -> InputConstants.KEY_LSHIFT;
+            case 2 -> InputConstants.KEY_LCONTROL;
+            case 4 -> InputConstants.KEY_LALT;
+            case 8 -> InputConstants.KEY_LGUI;
+            default -> InputConstants.UNKNOWN.getValue();
         };
-        if (modifierKey != GLFW.GLFW_KEY_UNKNOWN) {
-            profile.setLimitKey(macro, macro.getKeybind(), InputConstants.Type.KEYSYM.getOrCreate(modifierKey));
+        if (modifierKey != InputConstants.UNKNOWN.getValue()) {
+            profile.setLimitKey(macro, macro.getKeybind(), InputConstants.Type.KEYBOARD.getOrCreate(modifierKey));
         }
 
         while (!macro.getMessages().isEmpty()) macro.removeMessage(0);

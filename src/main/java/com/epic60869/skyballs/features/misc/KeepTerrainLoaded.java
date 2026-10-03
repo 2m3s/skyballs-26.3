@@ -183,7 +183,7 @@ public final class KeepTerrainLoaded {
     /** The server sent a chunk: remember it on disk. */
     public static void onServerChunk(ClientLevel level, ClientboundLevelChunkWithLightPacket packet) {
         if (applyingCached || !keeping(level)) return;
-        ChunkPos position = new ChunkPos(packet.getX(), packet.getZ());
+        ChunkPos position = new ChunkPos(packet.x(), packet.z());
         retained.remove(position);
         Loading key = new Loading(active.storage(), position.pack());
         pendingSaves.put(key, new PendingSave(active.storage(), level.registryAccess(), level.getSectionsCount(), packet));
@@ -243,7 +243,7 @@ public final class KeepTerrainLoaded {
             it.remove();
             ENCODER.execute(() -> {
                 try {
-                    save.storage().save(new ChunkPos(save.packet().getX(), save.packet().getZ()), encode(save.packet(), save.registries()), save.sections());
+                    save.storage().save(new ChunkPos(save.packet().x(), save.packet().z()), encode(save.packet(), save.registries()), save.sections());
                 } catch (Exception e) {
                     System.err.println("[SkyBalls] Couldn't cache a terrain chunk: " + e);
                 }
@@ -282,7 +282,7 @@ public final class KeepTerrainLoaded {
         if (connection == null) return;
         try {
             ClientboundLevelChunkWithLightPacket packet = decode(bytes, level.registryAccess());
-            if (packet.getX() != position.x() || packet.getZ() != position.z()) return;
+            if (packet.x() != position.x() || packet.z() != position.z()) return;
             applyingCached = true;
             try {
                 packet.handle(connection);

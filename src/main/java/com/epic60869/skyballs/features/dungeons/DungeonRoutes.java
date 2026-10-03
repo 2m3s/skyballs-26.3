@@ -631,7 +631,7 @@ public final class DungeonRoutes {
                             return 1;
                         }))
                         .then(ClientCommands.literal("folder").executes(c -> {
-                            net.minecraft.util.Util.getPlatform().openPath(routeFolder);
+                            com.mojang.blaze3d.Blaze3D.openPath(routeFolder);
                             return 1;
                         }))
                         .then(ClientCommands.literal("list").executes(c -> say("Your routes: "

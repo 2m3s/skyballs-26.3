@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.misc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
@@ -12,7 +13,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * Misc > Smart Disconnect: the pause menu's Disconnect button asks first, with Cancel and a red Disconnect button,
@@ -64,7 +64,7 @@ public final class SmartDisconnect {
             addRenderableWidget(Button.builder(Component.literal("Cancel"), b -> onClose())
                 .bounds(width / 2 - 104, y, 100, 20).build());
             addRenderableWidget(Button.builder(Component.literal("Disconnect").withStyle(ChatFormatting.RED),
-                    b -> original.onPress(new KeyEvent(GLFW.GLFW_KEY_ENTER, 0, 0)))
+                    b -> original.onPress(new KeyEvent(InputConstants.KEY_RETURN, 0, 0)))
                 .bounds(width / 2 + 4, y, 100, 20).build());
         }
 

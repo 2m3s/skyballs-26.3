@@ -1,5 +1,6 @@
 package com.epic60869.skyballs.features.dungeons;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.SkyBallsItemBackgrounds;
 import com.epic60869.skyballs.SkyBallsItemRarity;
@@ -29,7 +30,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +89,7 @@ public final class CaseOpening {
             ScreenMouseEvents.allowMouseRelease(screen).register((s, event) -> !running(container));
             ScreenKeyboardEvents.allowKeyPress(screen).register((s, event) -> {
                 if (!running(container)) return true;
-                if (event.key() == GLFW.GLFW_KEY_ESCAPE) stop(); // skip the animation, then Esc works as normal
+                if (event.key() == InputConstants.KEY_ESCAPE) stop(); // skip the animation, then Esc works as normal
                 return false;
             });
             ScreenEvents.remove(screen).register(s -> {
