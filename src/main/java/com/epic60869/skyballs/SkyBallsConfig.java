@@ -1111,6 +1111,11 @@ public final class SkyBallsConfig extends Config {
         @ConfigOption(name = "Hide Explosions", desc = "Hide explosion particles (TNT, Bonzo staff, Wither impact and other server explosions).")
         @ConfigEditorBoolean
         public boolean hideExplosions = false;
+
+        @Expose
+        @ConfigOption(name = "Hide Block Break Particles", desc = "Hide the particles when a block breaks (yours or anyone's) and the bits that fly off a block while you mine it, like SkyHanni's.")
+        @ConfigEditorBoolean
+        public boolean hideBlockBreakParticles = false;
     }
 
     /** Firmament's storage overlay options (Firmament's StorageOverlay.TConfig). */

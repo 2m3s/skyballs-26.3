@@ -4,6 +4,9 @@ All notable changes to SkyBalls are listed here, newest first.
 
 ## Unreleased
 
+### Added
+- Hide Block Break Particles (Misc > Random), like SkyHanni's: no particles when a block breaks, yours or anyone's, and none flying off the block you're mining.
+
 ### Changed
 - Arrow Counter only shows while you hold a bow or crossbow (Arrow Counter Only With Bow, on by default).
 - Shorter dropdown labels in the settings, so they're no longer shrunk to fit (e.g. "Own + Party", "Insta-Sell", "24h + sec", "In Quest"). What each choice means is in the option's description.

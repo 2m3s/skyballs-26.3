@@ -47,7 +47,7 @@
     "SkyBallsPlayerNameTagMixin",
     "SkyBallsSystemChatMixin",
     "SkyBallsLowFireMixin",
-    "SkyBallsHideExplosionsMixin",
+    "SkyBallsHideExplosionsMixin", "SkyBallsHideBlockBreakParticlesMixin",
     "SkyBallsWitherDragonsMixin",
     "SkyBallsLeapMenuMixin",
     "SkyBallsLeapMenuBackgroundMixin",
