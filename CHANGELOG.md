@@ -5,6 +5,10 @@ All notable changes to SkyBalls are listed here, newest first.
 ## Unreleased
 
 ### Added
+- Dungeon Chest Profit (Dungeons > Chest Profit): a reward chest's value minus its cost above the chest; at Croesus, each chest's profit with the best one highlighted, and the list of runs tinted green (unopened), yellow (one chest opened) or red (all claimed).
+- Highlight Bats (Dungeons > Mobs), and /sb debug starred to see what the starred mob highlight finds.
+- Blood Camp Beam Time: the mob kill countdown (and its box) turns red at the time to shoot your Mage beam, 0.2s by default, like Odin and NoammAddons.
+- /pt Name runs /p transfer Name. Minecraft's advancement and recipe popups are always hidden.
 - Hide Block Break Particles (Misc > Random), like SkyHanni's: no particles when a block breaks, yours or anyone's, and none flying off the block you're mining.
 
 ### Changed
@@ -13,6 +17,9 @@ All notable changes to SkyBalls are listed here, newest first.
 - [item] in plain chat now reads "[Heroic Hyperion](sb:HYPERION)" instead of a coded blob, so players without SkyBalls can read it; SkyBalls players still see the hoverable item. Old [item] links still work.
 
 ### Fixed
+- Settings search (and other MoulConfig text boxes) couldn't be typed in on 26.3.
+- !pt Name transfers the party to Name; leader commands work when the game started while you were already in a party (it checks /p list).
+- Starred mob boxes no longer need a clear line of sight to the mob's head (they're hidden behind walls anyway).
 - Party Commands (!warp, !pt, !f7, !fps, !ping, the Diana ones...) didn't answer anyone with a Hypixel emblem (☘, ☣...) before their name, so they never worked for you. Your own !warp, !allinvite and !f7 / !m7 work too now while you're leader.
 - Blaze puzzle solver: blazes' names now have a symbol before "Blaze", which it didn't expect, so it found none. The kill order now follows where the blazes are (low in the room: highest HP first), like Skyblocker.
 - Pet Display and other item icons: items Hypixel lists with old 1.8 names (Raw Fish, Ink Sack dyes, Lily Pad, Dandelion, wool, glass...) showed as barriers or the wrong item; newer paper-based items (Winding Ivy, Sloth Claws...) use Hypixel's model or a downloaded icon instead of paper. A held "Saddle" is the pet item, not the plain saddle.

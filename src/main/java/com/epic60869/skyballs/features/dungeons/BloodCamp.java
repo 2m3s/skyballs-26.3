@@ -114,6 +114,24 @@ public final class BloodCamp {
         return info == null ? 0 : Math.max(0, info.getLatency());
     }
 
+    /**
+     * The countdown's colour, like Odin's and NoammAddons's: green, yellow, gold as it nears {@code beam} seconds, red
+     * from then until the mob spawns (shoot now), aqua once it has.
+     */
+    private static ChatFormatting timeColour(float seconds, float beam) {
+        if (seconds < 0) return ChatFormatting.AQUA;
+        if (seconds <= beam) return ChatFormatting.RED;
+        if (seconds <= beam + 0.5f) return ChatFormatting.GOLD;
+        if (seconds <= beam + 1.0f) return ChatFormatting.YELLOW;
+        return ChatFormatting.GREEN;
+    }
+
+    private static float[] rgba(ChatFormatting colour, float alpha) {
+        net.minecraft.network.chat.TextColor text = net.minecraft.network.chat.TextColor.fromLegacyFormat(colour);
+        int rgb = text == null ? 0xFFFFFF : text.getValue();
+        return new float[]{((rgb >> 16) & 0xFF) / 255f, ((rgb >> 8) & 0xFF) / 255f, (rgb & 0xFF) / 255f, alpha};
+    }
+
     private static void box(PrimitiveCollector collector, Vec3 at, double size, float[] colour) {
         if (colour[3] <= 0f) return;
         AABB box = new AABB(0, 0, 0, size, size, size).move(at.add(-size / 2, 1.5, -size / 2));
@@ -143,9 +161,11 @@ public final class BloodCamp {
                     : head.end;
                 long time = (head.firstSpawns ? 2000 : 0) + config.tick * 50L - (tickTime - head.started) + config.offset;
                 Vec3 standPos = stand.getPosition(partial);
+                float seconds = (time - config.offset) / 1000f;
+                ChatFormatting timeColour = timeColour(seconds, config.beamTime);
                 if (mobOffset < time) {
                     box(collector, standPos.add(head.speed.scale(mobOffset)), size, position);
-                    box(collector, end, size, spawn);
+                    box(collector, end, size, config.colourBoxByTime ? rgba(timeColour, spawn[3]) : spawn);
                 } else {
                     box(collector, end, size, fin);
                 }
@@ -153,9 +173,7 @@ public final class BloodCamp {
                     collector.submitLinesFromPoints(new Vec3[]{standPos.add(0, 2, 0), end.add(0, 2, 0)}, LINE_COLOUR, 1f, 1.5f, false);
                 }
                 if (config.timeLeft) {
-                    float seconds = (time - config.offset) / 1000f;
-                    ChatFormatting c = seconds > 1.5 ? ChatFormatting.GREEN : seconds >= 0.5 ? ChatFormatting.GOLD : seconds >= 0 ? ChatFormatting.RED : ChatFormatting.AQUA;
-                    collector.submitText(Component.literal(String.format(Locale.US, "%.2fs", seconds)).withStyle(c), end.add(0, 2, 0), 2f, true);
+                    collector.submitText(Component.literal(String.format(Locale.US, "%.2fs", seconds)).withStyle(timeColour), end.add(0, 2, 0), 2f, true);
                 }
             }
         });

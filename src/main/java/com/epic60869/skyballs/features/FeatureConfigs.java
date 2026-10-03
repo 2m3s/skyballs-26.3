@@ -1620,7 +1620,7 @@ public final class FeatureConfigs {
         public boolean killTitle = false;
 
         @Expose
-        @ConfigOption(name = "Mob Kill Timers", desc = "Box where each blood mob will land, with a countdown until it spawns (green > 1.5s, gold, red, then aqua once spawned). Like Odin, only heads the Watcher throws are tracked, not the heads on the walls.")
+        @ConfigOption(name = "Mob Kill Timers", desc = "Box where each blood mob will land, with a countdown until it spawns, coloured by Beam Time (red when to shoot, aqua once spawned). Like Odin, only heads the Watcher throws are tracked, not the heads on the walls.")
         @ConfigEditorBoolean
         public boolean killTimers = false;
 
@@ -1653,6 +1653,16 @@ public final class FeatureConfigs {
         @ConfigOption(name = "Time Left", desc = "Show the time until the mob spawns.")
         @ConfigEditorBoolean
         public boolean timeLeft = true;
+
+        @Expose
+        @ConfigOption(name = "Beam Time (s)", desc = "When to shoot (your Mage beam) before the mob spawns, like Odin and NoammAddons. The countdown goes green, yellow, then gold, and turns red at this time until the mob spawns (aqua once it has).")
+        @ConfigEditorSlider(minValue = 0f, maxValue = 1f, minStep = 0.05f)
+        public float beamTime = 0.2f;
+
+        @Expose
+        @ConfigOption(name = "Colour Box By Time", desc = "Colour the box where the mob lands like the countdown (green, yellow, gold, red at Beam Time), instead of the Spawn Colour.")
+        @ConfigEditorBoolean
+        public boolean colourBoxByTime = true;
 
         @Expose
         @ConfigOption(name = "Offset (ms)", desc = "Shifts the countdown to match when mobs really spawn.")
