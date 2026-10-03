@@ -96,7 +96,7 @@ public final class BloodCamp {
     /** RGBA 0-1 from a MoulConfig colour string. */
     private static float[] colour(String value, float[] fallback) {
         try {
-            int argb = ChromaColour.Companion.specialToChromaRGB(value);
+            int argb = ChromaColour.forLegacyString(value).getEffectiveColourRGB();
             return new float[]{((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >>> 24) & 0xFF) / 255f};
         } catch (Exception e) {
             return fallback;

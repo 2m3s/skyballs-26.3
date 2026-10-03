@@ -40,6 +40,11 @@ public final class FeatureConfigs {
         public boolean arrowCounter = false;
 
         @Expose
+        @ConfigOption(name = "Arrow Counter Only With Bow", desc = "Only show the Arrow Counter while you're holding a bow (or crossbow).")
+        @ConfigEditorBoolean
+        public boolean arrowCounterBowOnly = true;
+
+        @Expose
         @ConfigOption(name = "Zealot Tracker", desc = "Tracker for the Zealots you kill in the End and the Summoning Eyes you drop, for this session or in total.")
         @ConfigEditorBoolean
         public boolean zealotCounter = false;
@@ -639,7 +644,7 @@ public final class FeatureConfigs {
         public boolean markRightDagger = false;
 
         @Expose
-        @ConfigOption(name = "First Dagger", desc = "Which dagger is shown on the left of the dagger HUD.")
+        @ConfigOption(name = "First Dagger", desc = "Which dagger is shown on the left of the dagger HUD. Twilight: Spirit/Crystal. Firedust: Ashen/Auric.")
         @ConfigEditorDropdown
         public com.epic60869.skyballs.features.slayer.BlazeSlayer.FirstDagger firstDagger = com.epic60869.skyballs.features.slayer.BlazeSlayer.FirstDagger.TWILIGHT;
 
@@ -1126,7 +1131,7 @@ public final class FeatureConfigs {
         public boolean secretWaypoints = false;
 
         @Expose
-        @ConfigOption(name = "Waypoint Type", desc = "Choose how dungeon secret waypoints are drawn. Outline is a clean boxless marker; filled waypoint includes the box and beacon beam.")
+        @ConfigOption(name = "Waypoint Type", desc = "How dungeon secret waypoints are drawn. Outline: a clean boxless marker. Highlight: a filled box. Waypoint: a filled box with a beacon beam. A + adds an outline.")
         @ConfigEditorDropdown
         public Waypoint.Type waypointType = Waypoint.Type.OUTLINE;
 
@@ -1156,7 +1161,7 @@ public final class FeatureConfigs {
         public boolean roomClearAlert = false;
 
         @Expose
-        @ConfigOption(name = "Room Clear Alert Mode", desc = "Which checkmarks to alert on: both, only all secrets done (green) or only room cleared (white).")
+        @ConfigOption(name = "Room Clear Alert Mode", desc = "Which checkmarks to alert on. Secrets: all secrets done (green). Cleared: room cleared (white). Both: either.")
         @ConfigEditorDropdown
         public RoomClearMode roomClearMode = RoomClearMode.BOTH;
 
@@ -1226,7 +1231,7 @@ public final class FeatureConfigs {
     }
 
     public enum RoomClearMode {
-        BOTH("Both"), GREEN("Secrets Done (Green)"), WHITE("Room Cleared (White)");
+        BOTH("Both"), GREEN("Secrets"), WHITE("Cleared");
 
         private final String label;
 
@@ -1263,7 +1268,7 @@ public final class FeatureConfigs {
     }
 
     public enum TerminalStyle {
-        ODIN("Odin"), NOAMM("NoammAddons");
+        ODIN("Odin"), NOAMM("Noamm");
 
         private final String label;
 
@@ -1278,7 +1283,7 @@ public final class FeatureConfigs {
     }
 
     public enum NoammSlotStyle {
-        RECT("Rect"), BORDERED("Bordered Rect"), BUTTON("Button");
+        RECT("Rect"), BORDERED("Bordered"), BUTTON("Button");
 
         private final String label;
 
@@ -1412,7 +1417,7 @@ public final class FeatureConfigs {
     }
 
     public enum ReleaseSound {
-        BELL("Bell"), NOTE_BELL("Note Block Bell"), DING("Ding"), ORB("XP Orb"), NONE("None");
+        BELL("Bell"), NOTE_BELL("Note Bell"), DING("Ding"), ORB("XP Orb"), NONE("None");
 
         private final String label;
 
@@ -1494,7 +1499,7 @@ public final class FeatureConfigs {
     }
 
     public enum LeapCorner {
-        TOP_LEFT("Top Left"), TOP_RIGHT("Top Right"), BOTTOM_LEFT("Bottom Left"), BOTTOM_RIGHT("Bottom Right");
+        TOP_LEFT("Top Left"), TOP_RIGHT("Top Right"), BOTTOM_LEFT("Bot Left"), BOTTOM_RIGHT("Bot Right");
 
         private final String label;
 
@@ -1682,7 +1687,7 @@ public final class FeatureConfigs {
     }
 
     public enum BoxStyle {
-        OUTLINE("Outline"), FILLED("Filled"), BOTH("Outline and Fill");
+        OUTLINE("Outline"), FILLED("Filled"), BOTH("Both");
 
         private final String label;
 
@@ -1949,7 +1954,7 @@ public final class FeatureConfigs {
     }
 
     public enum ProfitPriceSource {
-        INSTANT_SELL("Instant Sell"), SELL_ORDER("Sell Order"), BUY_ORDER("Buy Order"), NPC_SELL("NPC Sell");
+        INSTANT_SELL("Insta-Sell"), SELL_ORDER("Sell Order"), BUY_ORDER("Buy Order"), NPC_SELL("NPC Sell");
 
         private final String label;
 

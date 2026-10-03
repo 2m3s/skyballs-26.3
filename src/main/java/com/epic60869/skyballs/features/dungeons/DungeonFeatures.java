@@ -7,8 +7,6 @@ import com.epic60869.skyballs.features.core.SkyBallsChat;
 import com.epic60869.skyballs.features.core.SkyBallsHuds;
 import com.epic60869.skyballs.features.core.SkyBallsLocation;
 import com.epic60869.skyballs.sb.events.ServerTickCallback;
-import com.epic60869.skyballs.sb.skyblock.dungeon.DungeonScore;
-import com.epic60869.skyballs.sb.skyblock.dungeon.secrets.DungeonManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

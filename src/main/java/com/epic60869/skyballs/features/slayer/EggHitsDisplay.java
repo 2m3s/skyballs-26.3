@@ -77,7 +77,7 @@ public final class EggHitsDisplay {
 
     private static int colour(String value) {
         try {
-            return ChromaColour.Companion.specialToChromaRGB(value) & 0xFFFFFF;
+            return ChromaColour.forLegacyString(value).getEffectiveColourRGB() & 0xFFFFFF;
         } catch (Exception e) {
             return 0xFFFFFF;
         }

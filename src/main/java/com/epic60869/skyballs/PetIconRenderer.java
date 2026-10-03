@@ -177,8 +177,8 @@ public final class PetIconRenderer {
         if (settings.iconHeldItem) {
             String held = sample ? "DWARF_TURTLE_SHELMET" : PetHeldItems.heldItemId(name);
             if (held != null && !held.isEmpty() && RepoItems.displayName(held) != null) {
-                ItemStack item = RepoItems.itemStack(held);
-                g.item(item, iconX + ICON_SIZE - 8, iconY + ICON_SIZE - 8);
+                // Hypixel's model when its pack is loaded, else the item's picture: many pet items are paper underneath.
+                com.epic60869.skyballs.features.sbc.SbcItemIcons.drawId(g, held, iconX + ICON_SIZE - 8, iconY + ICON_SIZE - 8);
             }
         }
     }

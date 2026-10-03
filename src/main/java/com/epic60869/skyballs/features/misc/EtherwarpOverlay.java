@@ -30,7 +30,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public final class EtherwarpOverlay {
     public enum Style {
-        FILLED_OUTLINE("Filled and Outline"), OUTLINE("Outline"), FILLED("Filled");
+        FILLED_OUTLINE("Both"), OUTLINE("Outline"), FILLED("Filled");
 
         private final String label;
 
@@ -183,7 +183,7 @@ public final class EtherwarpOverlay {
 
     private static int colour(String value, int fallback) {
         try {
-            return ChromaColour.Companion.specialToChromaRGB(value);
+            return ChromaColour.forLegacyString(value).getEffectiveColourRGB();
         } catch (Exception e) {
             return fallback;
         }

@@ -2,9 +2,7 @@ package com.epic60869.skyballs;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import org.lwjgl.system.MemoryStack;
 
-import java.nio.DoubleBuffer;
 import java.util.Locale;
 
 /**

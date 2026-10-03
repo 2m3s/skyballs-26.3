@@ -283,7 +283,7 @@ public final class DianaRareMobs {
     private static final Pattern LOCAL_COCOON = Pattern.compile("^CAUGHT! You cocooned an? (?<mob>[^!]+)!$", Pattern.CASE_INSENSITIVE);
     private static final Pattern DUG_OUT = Pattern.compile("You dug out (?:a |an )?(?<mob>[^!§(]+)!", Pattern.CASE_INSENSITIVE);
     /** "Party > [MVP+] Name ♲: message". */
-    private static final Pattern PARTY_LINE = Pattern.compile("^Party > (?:\\[[^]]+] )?(?<name>[A-Za-z0-9_]{1,16})[^:]*: (?<body>.+)$");
+    private static final Pattern PARTY_LINE = Pattern.compile("^Party > (?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?(?<name>[A-Za-z0-9_]{1,16})[^:]*: (?<body>.+)$");
     private static final Pattern DAMAGE = Pattern.compile("^[✧✯]?(?<damage>[0-9,.]+[KMBkmb]?)[⚔+✧❤♞☄✷ﬗ✯]*$");
     private static final Pattern FULL_HEALTH = Pattern.compile("(?<current>[0-9,.]+[KMBkmb]?)\\s*/\\s*(?<max>[0-9,.]+[KMBkmb]?)");
     private static final Pattern CURRENT_HEALTH = Pattern.compile("(?<current>[0-9,.]+[KMBkmb]?)❤");
@@ -1187,7 +1187,7 @@ public final class DianaRareMobs {
 
     private static int rgb(String value, int fallback) {
         try {
-            return ChromaColour.Companion.specialToChromaRGB(value) & 0xFFFFFF;
+            return ChromaColour.forLegacyString(value).getEffectiveColourRGB() & 0xFFFFFF;
         } catch (Exception e) {
             return fallback;
         }
@@ -1254,7 +1254,7 @@ public final class DianaRareMobs {
         static void onMessage(String text, long now) {
             if (text.startsWith("Party > ") || text.startsWith("Party Leader: ") || text.startsWith("Party Members (")
                 || text.matches("^You have joined .+ party!$") || text.matches("^.+ joined the party\\.$")
-                || text.matches("^(?:\\[[^]]+] )?\\w+ invited (?:\\[[^]]+] )?\\w+ to the party! They have 60 seconds to accept\\.$")) {
+                || text.matches("^(?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?\\w+ invited (?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?\\w+ to the party! They have 60 seconds to accept\\.$")) {
                 inParty = true;
             } else if (text.equals("You left the party.") || text.startsWith("The party was disbanded")
                 || text.startsWith("You have been kicked from the party") || text.equals("You are not currently in a party.")

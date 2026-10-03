@@ -1,6 +1,5 @@
 package com.epic60869.skyballs;
 
-import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

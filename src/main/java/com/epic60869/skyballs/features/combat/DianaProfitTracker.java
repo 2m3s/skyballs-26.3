@@ -75,7 +75,7 @@ public final class DianaProfitTracker {
     private static final long ACTIVE_WINDOW_MS = 90_000L;
 
     public enum Period {
-        SESSION("Session"), SEASON("Mayor (Season)"), ALL_TIME("All Time");
+        SESSION("Session"), SEASON("Season"), ALL_TIME("All Time");
 
         private final String label;
 

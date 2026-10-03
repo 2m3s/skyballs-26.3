@@ -1245,7 +1245,6 @@ public final class SkyBallsConfig extends Config {
         }
 
         FileHolder holder = new FileHolder(path);
-        boolean configExisted = Files.exists(path);
 
         managed = new ManagedConfig<>(new io.github.notenoughupdates.moulconfig.managed.ManagedConfigBuilder<>(
             holder.file, SkyBallsConfig.class

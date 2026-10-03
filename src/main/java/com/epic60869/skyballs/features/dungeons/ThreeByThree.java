@@ -40,7 +40,7 @@ public final class ThreeByThree {
 
     private static int colour(String value) {
         try {
-            return ChromaColour.Companion.specialToChromaRGB(value);
+            return ChromaColour.forLegacyString(value).getEffectiveColourRGB();
         } catch (Exception e) {
             return 0xFF55FF55;
         }

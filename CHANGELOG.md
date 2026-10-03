@@ -2,6 +2,22 @@
 
 All notable changes to SkyBalls are listed here, newest first.
 
+## Unreleased
+
+### Changed
+- Arrow Counter only shows while you hold a bow or crossbow (Arrow Counter Only With Bow, on by default).
+- Shorter dropdown labels in the settings, so they're no longer shrunk to fit (e.g. "Own + Party", "Insta-Sell", "24h + sec", "In Quest"). What each choice means is in the option's description.
+- [item] in plain chat now reads "[Heroic Hyperion](sb:HYPERION)" instead of a coded blob, so players without SkyBalls can read it; SkyBalls players still see the hoverable item. Old [item] links still work.
+
+### Fixed
+- Party Commands (!warp, !pt, !f7, !fps, !ping, the Diana ones...) didn't answer anyone with a Hypixel emblem (☘, ☣...) before their name, so they never worked for you. Your own !warp, !allinvite and !f7 / !m7 work too now while you're leader.
+- Blaze puzzle solver: blazes' names now have a symbol before "Blaze", which it didn't expect, so it found none. The kill order now follows where the blazes are (low in the room: highest HP first), like Skyblocker.
+- Pet Display and other item icons: items Hypixel lists with old 1.8 names (Raw Fish, Ink Sack dyes, Lily Pad, Dandelion, wool, glass...) showed as barriers or the wrong item; newer paper-based items (Winding Ivy, Sloth Claws...) use Hypixel's model or a downloaded icon instead of paper. A held "Saddle" is the pet item, not the plain saddle.
+- Shared items (SkyBalls chat, [item], [inv]) were drawn as paper even when their icon was available.
+- [inv]: clicking an item in a shared inventory shows it big with its tooltip (Esc goes back to the inventory).
+- [item] with a pet, enchanted book or rune (ids with ";") showed as raw text instead of the item.
+- /sb who: a presence update from the server no longer empties the online list, and the screen says so when the server doesn't answer instead of loading forever. Errors from the SkyBalls server are now shown instead of being dropped silently.
+
 ## 1.4 — 2026-10-03
 
 This build is for Minecraft 26.3 (Fabric Loader 0.19.5, Fabric API 0.161.0+26.3). Minecraft 26.3 uses SDL instead of GLFW for keyboard and mouse input, so key codes changed: keybinds you set in SkyBalls's own settings on 26.2 (not Minecraft's Controls) may need setting again.

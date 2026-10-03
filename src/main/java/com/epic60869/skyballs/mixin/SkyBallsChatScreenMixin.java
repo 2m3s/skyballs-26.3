@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.epic60869.skyballs.SkyBallsGlobalChat;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.input.KeyEvent;
 import org.spongepowered.asm.mixin.Mixin;

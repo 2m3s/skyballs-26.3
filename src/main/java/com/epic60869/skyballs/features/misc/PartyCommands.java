@@ -25,11 +25,12 @@ import java.util.regex.Pattern;
  * !profit, ...; see {@link com.epic60869.skyballs.features.combat.DianaPartyCommands}).
  */
 public final class PartyCommands {
-    private static final Pattern PARTY_CHAT = Pattern.compile("^Party > (?:\\[[^]]+] )?(?<name>\\w+)[^:]*: !(?<command>\\w+)(?: +(?<arg>\\S+))?(?<more> +\\S.*?)?\\s*$");
-    private static final Pattern INVITED = Pattern.compile("^(?:\\[[^]]+] )?(?<me>\\w+) invited (?:\\[[^]]+] )?\\w+ to the party!");
-    private static final Pattern TRANSFERRED = Pattern.compile("^The party was transferred to (?:\\[[^]]+] )?(?<name>\\w+)");
-    private static final Pattern JOINED_OTHER = Pattern.compile("^You have joined (?:\\[[^]]+] )?(?<name>\\w+)'s? party!");
-    private static final Pattern LEADER_LIST = Pattern.compile("^Party Leader: (?:\\[[^]]+] )?(?<name>\\w+)");
+    // (?:[^\w\s\[]+ )? skips a Hypixel emblem (☘, ☣, ...) before a name: "Party > [MVP++] ☘ Name: !warp".
+    private static final Pattern PARTY_CHAT = Pattern.compile("^Party > (?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?(?<name>\\w+)[^:]*: !(?<command>\\w+)(?: +(?:[^\\w\\s\\[]+ )?(?<arg>\\S+))?(?<more> +\\S.*?)?\\s*$");
+    private static final Pattern INVITED = Pattern.compile("^(?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?(?<me>\\w+) invited (?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?\\w+ to the party!");
+    private static final Pattern TRANSFERRED = Pattern.compile("^The party was transferred to (?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?(?<name>\\w+)");
+    private static final Pattern JOINED_OTHER = Pattern.compile("^You have joined (?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?(?<name>\\w+)'s? party!");
+    private static final Pattern LEADER_LIST = Pattern.compile("^Party Leader: (?:\\[[^]]+] )?(?:[^\\w\\s\\[]+ )?(?<name>\\w+)");
 
     private static final Pattern INSTANCE = Pattern.compile("([fmt])([1-7])");
     private static final String[] FLOORS = {"ENTRANCE", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN"};
@@ -125,13 +126,15 @@ public final class PartyCommands {
             return;
         }
 
-        if (leader == null || !leader.equalsIgnoreCase(me()) || sender.equalsIgnoreCase(me())) return;
+        if (leader == null || !leader.equalsIgnoreCase(me())) return;
+        // Your own !warp, !allinvite and !f7 work too (like Odin); transferring or promoting yourself doesn't.
+        boolean self = sender.equalsIgnoreCase(me());
         String toRun = switch (command) {
-            case "warp" -> config.warp ? "party warp" : null;
+            case "warp", "w" -> config.warp ? "party warp" : null;
             case "allinvite", "allinv" -> config.allInvite ? "party settings allinvite" : null;
-            case "pt", "transfer", "ptme" -> config.transfer ? "party transfer " + sender : null;
-            case "promote" -> config.promote ? "party promote " + (arg == null ? sender : arg) : null;
-            case "demote" -> config.promote ? "party demote " + (arg == null ? sender : arg) : null;
+            case "pt", "transfer", "ptme" -> config.transfer && !self ? "party transfer " + sender : null;
+            case "promote" -> config.promote && (arg != null || !self) ? "party promote " + (arg == null ? sender : arg) : null;
+            case "demote" -> config.promote && (arg != null || !self) ? "party demote " + (arg == null ? sender : arg) : null;
             default -> instance(config, command);
         };
         if (toRun != null) run(toRun);

@@ -23,7 +23,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -424,10 +423,6 @@ public final class SkyBallsStorageSearch {
             return;
         }
         if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen)) return;
-        String title = cleanTitle(screen.getTitle().getString());
-        boolean matching = result.type().equals("ENDER_CHEST")
-            ? title.contains("ender chest")
-            : title.contains("backpack");
         // The highlight stays until it times out, like SkyOcean's.
     }
 

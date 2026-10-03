@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 public final class BazaarNotifications {
     private static final Pattern FILLED = Pattern.compile("^(?:\\[Bazaar] )?Your (?<side>Buy Order|Sell Offer) for [\\d,]+x (?<item>.+) was filled!$");
     private static final Pattern CANCELLED = Pattern.compile("^(?:\\[Bazaar] )?Your (?<side>Buy Order|Sell Offer) for (?:[\\d,]+x )?(?<item>.+) was cancelled!$");
-    private static final Pattern NUMBER = Pattern.compile("[\\d,]+(?:\\.\\d+)?");
     private static final long ORDER_CHECK_MS = 1_000L;
     private static final long SOUND_GAP_MS = 180L;
 

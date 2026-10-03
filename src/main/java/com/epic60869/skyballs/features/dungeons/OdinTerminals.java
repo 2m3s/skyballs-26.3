@@ -453,7 +453,7 @@ public final class OdinTerminals {
 
     static int colour(String value, int fallback) {
         try {
-            return ChromaColour.Companion.specialToChromaRGB(value);
+            return ChromaColour.forLegacyString(value).getEffectiveColourRGB();
         } catch (Exception e) {
             return fallback;
         }

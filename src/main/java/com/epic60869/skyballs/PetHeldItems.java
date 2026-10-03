@@ -115,8 +115,10 @@ public final class PetHeldItems {
 
     /** An item's id from its name ("Lucky Clover" -> "PET_ITEM_LUCKY_CLOVER"), or the name itself if unknown. */
     private static String idFor(String name) {
-        String id = RepoItems.idByName(name.trim());
-        return id != null ? id : name.trim().toUpperCase(Locale.ROOT).replace(' ', '_');
+        // Pet items first: "Saddle" is also a plain item, and SADDLE isn't the pet one.
+        java.util.List<String> ids = RepoItems.idsByName(name.trim());
+        for (String id : ids) if (id.startsWith("PET_ITEM_")) return id;
+        return !ids.isEmpty() ? ids.getFirst() : name.trim().toUpperCase(Locale.ROOT).replace(' ', '_');
     }
 
     private static void load() {

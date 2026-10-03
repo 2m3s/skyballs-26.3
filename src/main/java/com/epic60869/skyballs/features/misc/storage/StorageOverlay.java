@@ -24,7 +24,6 @@ import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public final class StorageOverlay {
 
     public static int colour(String special) {
         try {
-            return ChromaColour.Companion.specialToChromaRGB(special);
+            return ChromaColour.forLegacyString(special).getEffectiveColourRGB();
         } catch (Exception e) {
             return 0xFFFFFF00;
         }

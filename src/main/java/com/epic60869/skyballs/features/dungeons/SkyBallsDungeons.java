@@ -101,7 +101,6 @@ public final class SkyBallsDungeons {
         sb.dungeons.puzzleSolvers.solveTicTacToe = d.puzzles.ticTacToe;
         sb.dungeons.puzzleSolvers.solveThreeWeirdos = false; // Odin solver in OdinPuzzleSolvers
         sb.dungeons.puzzleSolvers.creeperSolver = false; // Odin solver in OdinPuzzleSolvers
-        sb.dungeons.puzzleSolvers.solveWaterboard = false; // Odin solver in OdinPuzzleSolvers
         // Only Odin's Water Board solver draws the lever line; Skyblocker's one-flow solver drew a second one.
         sb.dungeons.puzzleSolvers.waterboardOneFlow = false;
         // Skyblocker's previews still run next to Odin's solver.

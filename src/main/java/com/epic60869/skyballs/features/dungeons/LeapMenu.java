@@ -126,7 +126,7 @@ public final class LeapMenu {
             default -> "0:255:255:255:255";
         };
         try {
-            return ARGB.opaque(ChromaColour.Companion.specialToChromaRGB(value));
+            return ARGB.opaque(ChromaColour.forLegacyString(value).getEffectiveColourRGB());
         } catch (Exception e) {
             return 0xFFFFFFFF;
         }

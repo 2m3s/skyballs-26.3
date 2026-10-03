@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
@@ -224,20 +223,9 @@ public final class SkyBallsMod implements ClientModInitializer {
         return 1;
     }
 
-    private int openDiscord() {
-        Minecraft mc = Minecraft.getInstance();
-        mc.execute(() -> mc.gui.setScreen(new SkyBallsDiscordScreen(mc.gui.screen())));
-        return 1;
-    }
-
     private int openHudEditor() {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> mc.gui.setScreen(new SkyBallsHudEditorScreen(mc.gui.screen())));
-        return 1;
-    }
-
-    private int sendDiscordDm(String user, String message) {
-        SkyBallsGlobalChat.sendDiscordDm(user, message);
         return 1;
     }
 

@@ -75,7 +75,7 @@ public final class ServerInfo {
     }
 
     public enum LabelStyle {
-        TEXT("Text"), SYMBOLS("Symbols"), VALUES_ONLY("Values Only");
+        TEXT("Text"), SYMBOLS("Symbols"), VALUES_ONLY("Values");
 
         private final String label;
 
@@ -98,10 +98,10 @@ public final class ServerInfo {
     }
 
     public enum TimeFormat {
-        TWENTY_FOUR_HOUR("24-hour (HH:mm)", "HH:mm"),
-        TWENTY_FOUR_HOUR_SECONDS("24-hour with seconds", "HH:mm:ss"),
-        TWELVE_HOUR("12-hour (h:mm a)", "h:mm a"),
-        TWELVE_HOUR_SECONDS("12-hour with seconds", "h:mm:ss a");
+        TWENTY_FOUR_HOUR("24h", "HH:mm"),
+        TWENTY_FOUR_HOUR_SECONDS("24h + sec", "HH:mm:ss"),
+        TWELVE_HOUR("12h", "h:mm a"),
+        TWELVE_HOUR_SECONDS("12h + sec", "h:mm:ss a");
 
         private final String label;
         private final DateTimeFormatter formatter;
@@ -353,7 +353,7 @@ public final class ServerInfo {
     private static int colour(String value) {
         if (value == null || value.isEmpty()) return 0xFFFFFF;
         try {
-            return ChromaColour.Companion.specialToChromaRGB(value) & 0xFFFFFF;
+            return ChromaColour.forLegacyString(value).getEffectiveColourRGB() & 0xFFFFFF;
         } catch (Exception e) {
             return 0xFFFFFF;
         }
