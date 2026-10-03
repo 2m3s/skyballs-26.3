@@ -146,7 +146,7 @@ public abstract class SkyBallsCustomGuiContainerMixin<T extends AbstractContaine
     }
 
     @Inject(method = "slotClicked", at = @At("HEAD"))
-    private void skyballs$slotClicked(Slot slot, int slotId, int button, ContainerInput input, CallbackInfo ci) {
+    private void skyballs$slotClicked(Slot slot, int slotId, net.minecraft.client.input.MouseButtonEvent event, ContainerInput input, CallbackInfo ci) {
         if (slot != null) StorageOverlay.onSlotClick(slot);
     }
 }
