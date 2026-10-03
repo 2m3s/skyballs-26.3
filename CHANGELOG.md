@@ -15,6 +15,7 @@ The Minecraft 26.3 build starts again at 1.0, and checks for updates on its own 
 - Hide Block Break Particles (Misc > Random), like SkyHanni's: no particles when a block breaks, yours or anyone's, and none flying off the block you're mining.
 
 ### Changed
+- Diana Profit Tracker is laid out like SBO's Diana loot tracker: every rare drop always listed with its count, lootshares, rate per mob it drops from and value, then your other drops, coins, burrows, mobs, profit (and per hour) and playtime.
 - Arrow Counter only shows while you hold a bow or crossbow (Arrow Counter Only With Bow, on by default).
 - Shorter dropdown labels in the settings, so they're no longer shrunk to fit (e.g. "Own + Party", "Insta-Sell", "24h + sec", "In Quest"). What each choice means is in the option's description.
 - [item] in plain chat now reads "[Heroic Hyperion](sb:HYPERION)" instead of a coded blob, so players without SkyBalls can read it; SkyBalls players still see the hoverable item. Old [item] links still work.
