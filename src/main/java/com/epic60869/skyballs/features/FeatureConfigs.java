@@ -491,6 +491,32 @@ public final class FeatureConfigs {
         @Expose
         @Category(name = "Case Opening", desc = "Open Obsidian and Bedrock reward chests like a CS2 case (SkyOcean's Dungeon Gambling).")
         public CaseOpening caseOpeningMenu = new CaseOpening();
+
+        @Expose
+        @Category(name = "Chest Profit", desc = "What dungeon reward chests are worth after their cost, at the end of a run and at Croesus.")
+        public ChestProfit chestProfit = new ChestProfit();
+    }
+
+    public static final class ChestProfit {
+        @Expose
+        @ConfigOption(name = "Reward Chest Profit", desc = "In a reward chest (at the end of a run or at Croesus), show what its contents are worth minus the chest's cost, above the chest.")
+        @ConfigEditorBoolean
+        public boolean chest = true;
+
+        @Expose
+        @ConfigOption(name = "Croesus Chest Profit", desc = "In Croesus's menu for a run, show each chest's profit on it and highlight the most profitable one in green (red when even the best one loses coins).")
+        @ConfigEditorBoolean
+        public boolean croesusChests = true;
+
+        @Expose
+        @ConfigOption(name = "Croesus Run Overlay", desc = "In Croesus's list of runs, tint each run: green when no chest has been opened, yellow when one has, red when there are no more chests to open.")
+        @ConfigEditorBoolean
+        public boolean croesusRuns = true;
+
+        @Expose
+        @ConfigOption(name = "Include Essence", desc = "Count the essence in a chest towards its value.")
+        @ConfigEditorBoolean
+        public boolean includeEssence = true;
     }
 
     public static final class Floor7 {

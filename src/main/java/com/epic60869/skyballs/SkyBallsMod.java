@@ -109,6 +109,7 @@ public final class SkyBallsMod implements ClientModInitializer {
         com.epic60869.skyballs.features.misc.JoinCommands.init();
         com.epic60869.skyballs.features.misc.InventoryButtons.init();
         com.epic60869.skyballs.features.dungeons.CaseOpening.init();
+        com.epic60869.skyballs.features.dungeons.DungeonChestProfit.init();
         SkyBallsChangelog.init();
         SkyBallsNopoFeatures.init(configDir);
         SkyBallsNick.init(config);
