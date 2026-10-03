@@ -48,10 +48,13 @@ public final class PetHeldItems {
         });
     }
 
-    /** "[Lvl 200] [122✦] Golden Dragon ✦" -> "golden dragon". */
-    private static String key(String petName) {
-        String name = SkyBallsLocation.strip(petName).replaceAll("\\[Lvl \\d+]", "").replaceAll("\\[[^]]*✦]", "")
-            .replace("✦", "").trim();
+    /**
+     * "[Lvl 200] [122✦] Golden Dragon ✦" or the Pets menu's "⭐ Golden Dragon" -> "golden dragon": symbols (a favourite
+     * star, the skin mark...) and extra spaces don't count, so the menu's and the tab list's names match.
+     */
+    static String key(String petName) {
+        String name = SkyBallsLocation.strip(petName == null ? "" : petName).replaceAll("\\[[^]]*]", "")
+            .replaceAll("[^\\p{L}\\p{N} ]", "").replaceAll("\\s+", " ").trim();
         return name.toLowerCase(Locale.ROOT);
     }
 
@@ -125,7 +128,11 @@ public final class PetHeldItems {
         try {
             if (!Files.exists(file)) return;
             JsonObject root = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
-            root.entrySet().forEach(e -> HELD.put(e.getKey(), e.getValue().getAsString()));
+            // Keys saved before the name matching ignored symbols ("⭐  golden dragon") are tidied the same way.
+            root.entrySet().forEach(e -> {
+                String key = key(e.getKey());
+                if (!key.isEmpty() && (!HELD.containsKey(key) || !e.getValue().getAsString().isEmpty())) HELD.put(key, e.getValue().getAsString());
+            });
         } catch (Exception e) {
             System.err.println("[SkyBalls] Could not read pet-held-items.json: " + e.getMessage());
         }

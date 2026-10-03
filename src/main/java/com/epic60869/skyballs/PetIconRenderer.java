@@ -95,8 +95,7 @@ public final class PetIconRenderer {
     }
 
     private static String key(String name) {
-        return name == null ? "" : name.replaceAll("§.", "").replaceAll("\\[Lvl \\d+]", "").replaceAll("\\[[^]]*✦]", "")
-            .replace("✦", "").trim().toLowerCase(Locale.ROOT);
+        return PetHeldItems.key(name);
     }
 
     /** "Golden Dragon" -> "GOLDEN_DRAGON;4". */

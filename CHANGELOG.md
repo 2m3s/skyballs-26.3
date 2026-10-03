@@ -17,6 +17,7 @@ All notable changes to SkyBalls are listed here, newest first.
 - [item] in plain chat now reads "[Heroic Hyperion](sb:HYPERION)" instead of a coded blob, so players without SkyBalls can read it; SkyBalls players still see the hoverable item. Old [item] links still work.
 
 ### Fixed
+- Pet Display: a pet favourited in the Pets menu (⭐) never showed its held item on the icon, as its name didn't match the tab list's.
 - Settings search (and other MoulConfig text boxes) couldn't be typed in on 26.3.
 - !pt Name transfers the party to Name; leader commands work when the game started while you were already in a party (it checks /p list).
 - Starred mob boxes no longer need a clear line of sight to the mob's head (they're hidden behind walls anyway).
