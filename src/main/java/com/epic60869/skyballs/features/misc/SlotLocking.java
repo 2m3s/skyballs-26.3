@@ -202,13 +202,6 @@ public final class SlotLocking {
         SkyBallsContainerScreenAccessor access = (SkyBallsContainerScreenAccessor) screen;
         int left = access.skyballs$getLeftPos();
         int top = access.skyballs$getTopPos();
-        for (Slot slot : screen.getMenu().slots) {
-            if (!isProtected(slot.getItem())) continue;
-            int x = left + slot.x;
-            int y = top + slot.y;
-            g.outline(x, y, 16, 16, 0xFF55DD99);
-            g.text(Minecraft.getInstance().font, "★", x + 8, y - 1, 0xFFFFD54F, true);
-        }
 
         if (!c.enabled || !(screen instanceof InventoryScreen)) return;
         Slot hovered = access.skyballs$getHoveredSlot();
@@ -230,6 +223,16 @@ public final class SlotLocking {
             ey = top + end.y + 8;
         }
         line(g, sx, sy, ex, ey, 0xFF55FF55);
+    }
+
+    /**
+     * The box and star on a protected item, drawn with the slot (coordinates relative to the menu) so tooltips and
+     * the item on your cursor go over them.
+     */
+    public static void renderSlot(GuiGraphicsExtractor g, Slot slot) {
+        if (!isProtected(slot.getItem())) return;
+        g.outline(slot.x, slot.y, 16, 16, 0xFF55DD99);
+        g.text(Minecraft.getInstance().font, "★", slot.x + 8, slot.y - 1, 0xFFFFD54F, true);
     }
 
     /** A straight line made of small squares. */

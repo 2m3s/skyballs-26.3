@@ -21,13 +21,13 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Tells you in chat when a newer SkyBalls is out: "New SkyBalls Mod Version 1.2.3 --> 1.2.5" (the newest release, even if
- * you're several versions behind), with a link to the download. Checked from GitHub's latest release (2m3s/SkyBalls)
+ * you're several versions behind), with a link to the download. Checked from GitHub's latest release (2m3s/skyballs-26.3)
  * when you join a server and every minute while you're in game, so a release made while you play shows up within a
  * minute. Repeat checks send the last answer's ETag, and GitHub's "not changed" (304) doesn't count toward its limit.
  * Each new version is only announced once per game session.
  */
 public final class SkyBallsUpdateChecker {
-    private static final String LATEST_URL = "https://api.github.com/repos/2m3s/SkyBalls/releases/latest";
+    private static final String LATEST_URL = "https://api.github.com/repos/2m3s/skyballs-26.3/releases/latest";
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("SkyBalls");
     private static final long CHECK_EVERY_MS = 60_000L;
     /** GitHub's ETag for the last answer: asking "changed since?" gets a 304 that doesn't count toward the rate limit. */
@@ -82,7 +82,7 @@ public final class SkyBallsUpdateChecker {
             response.headers().firstValue("ETag").ifPresent(tag -> etag = tag);
             JsonObject release = JsonParser.parseString(response.body()).getAsJsonObject();
             String latest = release.get("tag_name").getAsString().replaceFirst("^[vV]", "").trim();
-            String url = release.has("html_url") ? release.get("html_url").getAsString() : "https://github.com/2m3s/SkyBalls/releases/latest";
+            String url = release.has("html_url") ? release.get("html_url").getAsString() : "https://github.com/2m3s/skyballs-26.3/releases/latest";
             String current = installed();
             LOGGER.info("[SkyBalls] Update check: installed {}, latest {}", current, latest);
             if (current.isEmpty() || compare(latest, current) <= 0 || latest.equals(announced)) return;

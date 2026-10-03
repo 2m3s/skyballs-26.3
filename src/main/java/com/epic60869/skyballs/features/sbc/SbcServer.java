@@ -33,7 +33,7 @@ public final class SbcServer {
     private static Update update;
     private static boolean shownThisJoin;
     private static final List<Component> WAITING = new ArrayList<>();
-    private static final String DEFAULT_URL = "https://github.com/2m3s/SkyBalls/releases/latest";
+    private static final String DEFAULT_URL = "https://github.com/2m3s/skyballs-26.3/releases/latest";
 
     private SbcServer() {}
 
@@ -94,6 +94,9 @@ public final class SbcServer {
         String version = Sbc.str(latest, "version").replaceFirst("^[vV]", "");
         if (version.isEmpty()) return;
         String url = Sbc.str(latest, "downloadUrl");
+        // This is the Minecraft 26.3 build (versions from 1.0); the server's versions are the 26.2 build's, so only a
+        // release meant for 26.3 counts.
+        if (!url.contains("26.3")) return;
         boolean required = Sbc.bool(packet, "required") || Sbc.bool(latest, "required");
         Update u = new Update(Sbc.str(packet, "current").isEmpty() ? SbcInfo.modVersion() : Sbc.str(packet, "current"), version,
             Sbc.str(latest, "title"), Sbc.str(latest, "notes"), url.startsWith("http") ? url : DEFAULT_URL, required, Sbc.str(packet, "message"));

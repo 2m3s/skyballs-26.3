@@ -2,7 +2,9 @@
 
 All notable changes to SkyBalls are listed here, newest first.
 
-## Unreleased
+## 1.0 (Minecraft 26.3) — 2026-10-03
+
+The Minecraft 26.3 build starts again at 1.0, and checks for updates on its own releases (2m3s/skyballs-26.3).
 
 ### Added
 - Party Coord Waypoints (Mayors > Diana, on by default), like SkyHanni: coordinates a party member sends ("x: -30, y: 87, z: 126") get a beacon waypoint with their name and distance, until you reach it or for a minute.
@@ -18,6 +20,7 @@ All notable changes to SkyBalls are listed here, newest first.
 - [item] in plain chat now reads "[Heroic Hyperion](sb:HYPERION)" instead of a coded blob, so players without SkyBalls can read it; SkyBalls players still see the hoverable item. Old [item] links still work.
 
 ### Fixed
+- /sb protect's box and star no longer draw over tooltips and the item on your cursor.
 - Pet Display: a pet favourited in the Pets menu (⭐) never showed its held item on the icon, as its name didn't match the tab list's.
 - Settings search (and other MoulConfig text boxes) couldn't be typed in on 26.3.
 - !pt Name transfers the party to Name; leader commands work when the game started while you were already in a party (it checks /p list).

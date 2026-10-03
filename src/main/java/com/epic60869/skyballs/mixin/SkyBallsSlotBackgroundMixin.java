@@ -20,6 +20,12 @@ public abstract class SkyBallsSlotBackgroundMixin {
         SkyBallsItemBackgrounds.beginContainer((AbstractContainerScreen<?>) (Object) this);
     }
 
+    /** /sb protect's box and star, drawn with the slot so tooltips cover them. */
+    @Inject(method = "extractSlot", at = @At("TAIL"))
+    private void skyballs$protectedSlot(GuiGraphicsExtractor graphics, net.minecraft.world.inventory.Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+        com.epic60869.skyballs.features.misc.SlotLocking.renderSlot(graphics, slot);
+    }
+
     @Inject(method = "extractContents", at = @At("RETURN"))
     private void skyballs$endContainer(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
         SkyBallsItemBackgrounds.endContainer();
