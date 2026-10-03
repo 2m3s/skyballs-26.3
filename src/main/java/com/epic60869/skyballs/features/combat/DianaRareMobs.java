@@ -1017,6 +1017,11 @@ public final class DianaRareMobs {
         return config.showPartyMessages;
     }
 
+    /** Whether a party message is a rare mob share (those get their own waypoint here). */
+    static boolean isRareMobShare(String body) {
+        return parseShare(body.trim()) != null;
+    }
+
     /** {mob, location} from any of the share formats, or null. */
     private static Object[] parseShare(String body) {
         Matcher legacy = LEGACY_FOUND.matcher(body);

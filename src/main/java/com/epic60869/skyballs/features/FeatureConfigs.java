@@ -401,6 +401,11 @@ public final class FeatureConfigs {
         public DianaSharedMobs sharedMobs = new DianaSharedMobs();
 
         @Expose
+        @ConfigOption(name = "Party Coord Waypoints", desc = "Like SkyHanni: coordinates someone sends in party chat (\"x: -30, y: 87, z: 126\") get a waypoint with their name and how far away it is, for a minute or until you reach it. Rare mob shares keep their own waypoint.")
+        @ConfigEditorBoolean
+        public boolean partyCoordWaypoints = true;
+
+        @Expose
         @ConfigOption(name = "Siamese Lynx Highlight", desc = "Highlight the Siamese Lynx you can hit (the one with angry villager particles) in green.")
         @ConfigEditorBoolean
         public boolean lynxHighlight = true;

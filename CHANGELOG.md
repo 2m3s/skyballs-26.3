@@ -5,6 +5,7 @@ All notable changes to SkyBalls are listed here, newest first.
 ## Unreleased
 
 ### Added
+- Party Coord Waypoints (Mayors > Diana, on by default), like SkyHanni: coordinates a party member sends ("x: -30, y: 87, z: 126") get a beacon waypoint with their name and distance, until you reach it or for a minute.
 - Dungeon Chest Profit (Dungeons > Chest Profit): a reward chest's value minus its cost above the chest; at Croesus, each chest's profit with the best one highlighted, and the list of runs tinted green (unopened), yellow (one chest opened) or red (all claimed).
 - Highlight Bats (Dungeons > Mobs), and /sb debug starred to see what the starred mob highlight finds.
 - Blood Camp Beam Time: the mob kill countdown (and its box) turns red at the time to shoot your Mage beam, 0.2s by default, like Odin and NoammAddons.
