@@ -192,7 +192,12 @@ public final class SkyBallsMod implements ClientModInitializer {
             .then(SkyBallsNickCommand.node())
             .then(ClientCommands.literal("discord").executes(context -> discord()))
             .then(ClientCommands.literal("gui").executes(context -> openHudEditor()))
-            .then(ClientCommands.literal("debug").executes(context -> SkyBallsDebug.run()));
+            .then(ClientCommands.literal("debug").executes(context -> SkyBallsDebug.run())
+                .then(ClientCommands.literal("starred").executes(context -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    mc.execute(() -> mc.gui.hud.getChat().addClientSystemMessage(com.epic60869.skyballs.features.dungeons.StarredMobs.debug()));
+                    return 1;
+                })));
 
         return root;
     }

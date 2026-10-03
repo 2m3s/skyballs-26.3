@@ -1265,6 +1265,16 @@ public final class FeatureConfigs {
         @ConfigOption(name = "Line Width", desc = "Thickness of the box outline.")
         @ConfigEditorSlider(minValue = 1f, maxValue = 5f, minStep = 0.5f)
         public float starredLineWidth = 2f;
+
+        @Expose
+        @ConfigOption(name = "Highlight Bats", desc = "Draw a box around bats in dungeons (secret bats), hidden behind walls.")
+        @ConfigEditorBoolean
+        public boolean bats = true;
+
+        @Expose
+        @ConfigOption(name = "Bat Colour", desc = "Colour of the box around bats.")
+        @ConfigEditorColour
+        public String batColor = "0:255:85:255:255";
     }
 
     public enum TerminalStyle {
