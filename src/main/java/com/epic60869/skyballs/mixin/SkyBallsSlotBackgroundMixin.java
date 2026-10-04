@@ -20,6 +20,12 @@ public abstract class SkyBallsSlotBackgroundMixin {
         SkyBallsItemBackgrounds.beginContainer((AbstractContainerScreen<?>) (Object) this);
     }
 
+    /** The equipped loadout's highlight, behind the slot's item. */
+    @Inject(method = "extractSlot", at = @At("HEAD"))
+    private void skyballs$slotBackground(GuiGraphicsExtractor graphics, net.minecraft.world.inventory.Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+        com.epic60869.skyballs.features.misc.LoadoutHighlight.renderSlot(graphics, slot);
+    }
+
     /** /sb protect's box and star, drawn with the slot so tooltips cover them. */
     @Inject(method = "extractSlot", at = @At("TAIL"))
     private void skyballs$protectedSlot(GuiGraphicsExtractor graphics, net.minecraft.world.inventory.Slot slot, int mouseX, int mouseY, CallbackInfo ci) {

@@ -1542,6 +1542,24 @@ public final class FeatureConfigs {
         public boolean preventMisclicks = true;
     }
 
+    /** SkyHanni's LoadoutHighlightingConfig (LGPL-2.1), without favourites. */
+    public static final class LoadoutHighlight {
+        @Expose
+        @ConfigOption(name = "Enabled", desc = "Enable highlighting of loadouts in the inventory.")
+        @ConfigEditorBoolean
+        public boolean enabled = true;
+
+        @Expose
+        @ConfigOption(name = "Currently Equipped", desc = "Highlight the currently equipped loadout in the inventory.")
+        @ConfigEditorBoolean
+        public boolean currentlyEquipped = true;
+
+        @Expose
+        @ConfigOption(name = "Currently Equipped Color", desc = "The color used to highlight the currently equipped loadout in the inventory.")
+        @ConfigEditorColour
+        public String equippedColor = "0:170:85:255:85";
+    }
+
     public static final class WardrobeHotkeys {
         @Expose
         @ConfigOption(name = "Enabled", desc = "Use configurable keys to equip Wardrobe slots while its menu is open.")
@@ -2627,8 +2645,9 @@ public final class FeatureConfigs {
 
         @Expose @ConfigOption(name = "!warp", desc = "Runs /party warp.") @ConfigEditorBoolean public boolean warp = true;
         @Expose @ConfigOption(name = "!allinvite", desc = "Runs /party settings allinvite.") @ConfigEditorBoolean public boolean allInvite = true;
-        @Expose @ConfigOption(name = "!pt / !transfer", desc = "Transfers the party to the player who asked.") @ConfigEditorBoolean public boolean transfer = true;
+        @Expose @ConfigOption(name = "!pt / !transfer", desc = "Transfers the party to the player who asked, or the player named after it. The name can be just the start of it: !pt nix transfers to NixJussid.") @ConfigEditorBoolean public boolean transfer = true;
         @Expose @ConfigOption(name = "!promote / !demote", desc = "Promotes or demotes the player who asked, or the player named after it (!promote Name).") @ConfigEditorBoolean public boolean promote = false;
+        @Expose @ConfigOption(name = "!kick", desc = "Kicks the player named after it (!kick Name). The name can be just the start of it: !kick nix kicks NixJussid. Never kicks you.") @ConfigEditorBoolean public boolean kick = true;
 
         @Expose @ConfigOption(name = "!f1 - !f7", desc = "Joins that Catacombs floor (Odin's queue commands). Only while you're leader.") @ConfigEditorBoolean public boolean floors = true;
         @Expose @ConfigOption(name = "!m1 - !m7", desc = "Joins that Master Mode floor. Only while you're leader.") @ConfigEditorBoolean public boolean masterFloors = true;

@@ -289,6 +289,11 @@ public final class SkyBallsConfig extends Config {
 
         @Expose
         @Accordion
+        @ConfigOption(name = "Loadout Highlight", desc = "SkyHanni's loadout highlighting: the loadout you have equipped is highlighted in the Loadouts menu.")
+        public com.epic60869.skyballs.features.FeatureConfigs.LoadoutHighlight loadoutHighlight = new com.epic60869.skyballs.features.FeatureConfigs.LoadoutHighlight();
+
+        @Expose
+        @Accordion
         @ConfigOption(name = "Item Notification", desc = "Show items from your list on a HUD when they go into your sacks or inventory (SkyOcean's Sack Notification as a HUD).")
         public com.epic60869.skyballs.features.FeatureConfigs.ItemNotification itemNotification = new com.epic60869.skyballs.features.FeatureConfigs.ItemNotification();
 
