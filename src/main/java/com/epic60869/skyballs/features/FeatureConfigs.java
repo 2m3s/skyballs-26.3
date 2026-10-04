@@ -740,6 +740,11 @@ public final class FeatureConfigs {
         @ConfigOption(name = "Special Drop Animation", desc = "Play an animation when you drop a farming dye or a Ray of Helios.")
         @ConfigEditorBoolean
         public boolean specialDropAnimation = false;
+
+        @Expose
+        @ConfigOption(name = "Mute Overflow Drop Sound", desc = "Don't play the nether portal sound with \"OVERFLOW! Your ... has just dropped a ...!\" (e.g. a Tool Exp Capsule).")
+        @ConfigEditorBoolean
+        public boolean muteOverflowDropSound = true;
     }
 
     /** SkyHanni's PestTimerConfig (LGPL-2.1). */
