@@ -41,6 +41,7 @@ public final class GardenFeatures {
         });
         SkyBallsChat.onChat(GardenFeatures::onChat);
         PestTimer.init();
+        PestFinder.init();
 
         com.epic60869.skyballs.features.core.SkyBallsHuds.setting("yaw_pitch", () -> config() != null && config().yawPitch);
         SkyBallsHuds.register("yaw_pitch", "Yaw and Pitch",

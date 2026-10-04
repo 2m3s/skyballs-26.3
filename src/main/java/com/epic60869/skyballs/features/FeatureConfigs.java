@@ -727,6 +727,11 @@ public final class FeatureConfigs {
         public PestSpawn pestSpawn = new PestSpawn();
 
         @Expose
+        @Accordion
+        @ConfigOption(name = "Pest Finder", desc = "SkyHanni's Teleport Hotkey and /shtpinfested: warp to the nearest plot with pests on it.")
+        public PestFinder pestFinder = new PestFinder();
+
+        @Expose
         @ConfigOption(name = "Blocks Per Second", desc = "HUD showing how many blocks per second you are breaking.")
         @ConfigEditorBoolean
         public boolean blocksPerSecond = false;
@@ -842,6 +847,24 @@ public final class FeatureConfigs {
         @ConfigOption(name = "List of Sounds", desc = "A list of available sounds.")
         @ConfigEditorButton(buttonText = "Open")
         public Runnable listOfSounds = com.epic60869.skyballs.features.garden.PestTimer::openSoundsList;
+    }
+
+    /** SkyHanni's PestFinderConfig teleport options (LGPL-2.1). */
+    public static final class PestFinder {
+        @Expose
+        @ConfigOption(name = "Teleport Hotkey", desc = "Press this key to warp to the nearest plot with pests on it.")
+        @io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind(defaultKey = -1)
+        public int teleportHotkey = -1;
+
+        @Expose
+        @ConfigOption(name = "Always Teleport", desc = "Allow teleporting with the Teleport Hotkey even when you're already in an infested plot.")
+        @ConfigEditorBoolean
+        public boolean alwaysTp = false;
+
+        @Expose
+        @ConfigOption(name = "Back to Garden", desc = "Make the Teleport Hotkey warp you to Garden if you don't have any pests.")
+        @ConfigEditorBoolean
+        public boolean backToGarden = false;
     }
 
     /** SkyHanni's PestSpawnConfig (LGPL-2.1). */
