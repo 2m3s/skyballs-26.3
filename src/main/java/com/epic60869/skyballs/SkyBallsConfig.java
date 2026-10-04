@@ -651,7 +651,7 @@ public final class SkyBallsConfig extends Config {
     public Mining mining = new Mining();
 
     @Expose
-    @Category(name = "Skills", desc = "SkyHanni's Skill Progress display.")
+    @Category(name = "Skill Progress", desc = "SkyHanni's Skill Progress: the progress display and bar, ETA display, all skills display, overflow levels and custom goals.")
     public com.epic60869.skyballs.features.FeatureConfigs.SkillProgress skills = new com.epic60869.skyballs.features.FeatureConfigs.SkillProgress();
 
     @Expose

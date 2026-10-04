@@ -712,14 +712,19 @@ public final class FeatureConfigs {
         public boolean yawPitch = false;
 
         @Expose
-        @ConfigOption(name = "Pest Cooldown", desc = "HUD counting down from the last pest spawn.")
-        @ConfigEditorBoolean
-        public boolean pestCooldown = false;
-
-        @Expose
-        @ConfigOption(name = "Pest Cooldown (seconds)", desc = "Your pest spawn cooldown in seconds.")
+        @ConfigOption(name = "Pest Cooldown Time (seconds)", desc = "Your pest spawn cooldown. The Pest Spawn Timer counts down this long from each pest spawn (the tab list isn't used).")
         @ConfigEditorSlider(minValue = 60, maxValue = 900, minStep = 5)
         public float pestCooldownSeconds = 300;
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Pest Spawn Timer", desc = "SkyHanni's Pest Spawn Timer: time since the last pest, the pest cooldown and cooldown warnings.")
+        public PestTimer pestTimer = new PestTimer();
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Pest Spawn", desc = "SkyHanni's pest spawn title, chat format and spawn sound.")
+        public PestSpawn pestSpawn = new PestSpawn();
 
         @Expose
         @ConfigOption(name = "Blocks Per Second", desc = "HUD showing how many blocks per second you are breaking.")
@@ -730,6 +735,201 @@ public final class FeatureConfigs {
         @ConfigOption(name = "Special Drop Animation", desc = "Play an animation when you drop a farming dye or a Ray of Helios.")
         @ConfigEditorBoolean
         public boolean specialDropAnimation = false;
+    }
+
+    /** SkyHanni's PestTimerConfig (LGPL-2.1). */
+    public static final class PestTimer {
+        @Expose
+        @ConfigOption(name = "Enabled", desc = "Show the time since the last pest spawned in your garden.")
+        @ConfigEditorBoolean
+        public boolean enabled = true;
+
+        @Expose
+        @ConfigOption(name = "Only When Holding", desc = "Only show the time display when holding the specified items.\nLeave empty to always show.")
+        @ConfigEditorDraggableList
+        public List<HeldItem> onlyWhenHolding = new ArrayList<>(List.of(HeldItem.FARMING_TOOL));
+
+        public enum HeldItem {
+            FARMING_TOOL("Farming Tool"),
+            VACUUM("Vacuum"),
+            LASSO("Lasso");
+
+            private final String displayName;
+
+            HeldItem(String displayName) {
+                this.displayName = displayName;
+            }
+
+            @Override
+            public String toString() {
+                return displayName;
+            }
+        }
+
+        @Expose
+        @ConfigOption(name = "Pest Timer Text", desc = "Drag text to change the appearance of the overlay.")
+        @ConfigEditorDraggableList
+        public List<TextEntry> pestDisplay = new ArrayList<>(List.of(TextEntry.PEST_TIMER, TextEntry.PEST_COOLDOWN));
+
+        public enum TextEntry {
+            PEST_TIMER("§eLast pest spawned: §b8s ago"),
+            PEST_COOLDOWN("§ePest Cooldown: §b1m 8s"),
+            AVERAGE_PEST_SPAWN("§eAverage time to spawn: §b4m 32s");
+
+            private final String displayName;
+
+            TextEntry(String displayName) {
+                this.displayName = displayName;
+            }
+
+            @Override
+            public String toString() {
+                return displayName;
+            }
+        }
+
+        @Expose
+        @ConfigOption(name = "Pest Cooldown Warning", desc = "Warn when pests are eligible to spawn.")
+        @ConfigEditorBoolean
+        public boolean cooldownOverWarning = false;
+
+        @Expose
+        @ConfigOption(name = "Repeat Warning", desc = "Repeats the warning sound and title until the loadouts or wardrobe menu is opened, or the pest cooldown expires.")
+        @ConfigEditorBoolean
+        public boolean repeatWarning = false;
+
+        @Expose
+        @ConfigOption(name = "Warn Before Cooldown End", desc = "Warn this many seconds before the cooldown is over.")
+        @ConfigEditorSlider(minValue = 1, maxValue = 30, minStep = 1)
+        public int cooldownWarningTime = 5;
+
+        @Expose
+        @ConfigOption(name = "AFK Timeout", desc = "Don't include spawn time in average spawn time display when the player goes AFK for at least this many seconds.")
+        @ConfigEditorSlider(minValue = 5, maxValue = 300, minStep = 1)
+        public int averagePestSpawnTimeout = 30;
+
+        @Expose
+        @ConfigOption(name = "Pest Spawn Time Chat Message", desc = "When a pest spawns, send the time it took to spawn it in chat.")
+        @ConfigEditorBoolean
+        public boolean pestSpawnChatMessage = false;
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Sound Settings", desc = "")
+        public PestTimerSound sound = new PestTimerSound();
+    }
+
+    public static final class PestTimerSound {
+        @Expose
+        @ConfigOption(name = "Notification Sound", desc = "The sound played for the notification.")
+        @ConfigEditorText
+        public String name = "block.note_block.pling";
+
+        @Expose
+        @ConfigOption(name = "Pitch", desc = "The pitch of the notification sound.")
+        @ConfigEditorSlider(minValue = 0.5f, maxValue = 2f, minStep = 0.1f)
+        public float pitch = 0.5f;
+
+        @ConfigOption(name = "Test Sound", desc = "Test current sound settings.")
+        @ConfigEditorButton(buttonText = "Test")
+        public Runnable testSound = com.epic60869.skyballs.features.garden.PestTimer::playUserSound;
+
+        @Expose
+        @ConfigOption(name = "Repeat Duration", desc = "Change how often the sound should be repeated in ticks. Change to 20 for only once per second.")
+        @ConfigEditorSlider(minValue = 1, maxValue = 20, minStep = 1)
+        public int repeatDuration = 20;
+
+        @ConfigOption(name = "List of Sounds", desc = "A list of available sounds.")
+        @ConfigEditorButton(buttonText = "Open")
+        public Runnable listOfSounds = com.epic60869.skyballs.features.garden.PestTimer::openSoundsList;
+    }
+
+    /** SkyHanni's PestSpawnConfig (LGPL-2.1). */
+    public static final class PestSpawn {
+        @Expose
+        @ConfigOption(name = "Chat Message Format", desc = "Change how the pest spawn chat message should be formatted.")
+        @ConfigEditorDropdown
+        public ChatMessageFormat chatMessageFormat = ChatMessageFormat.HYPIXEL;
+
+        public enum ChatMessageFormat {
+            HYPIXEL("Hypixel Style"),
+            COMPACT("Compact"),
+            DISABLED("Disabled");
+
+            private final String displayName;
+
+            ChatMessageFormat(String displayName) {
+                this.displayName = displayName;
+            }
+
+            @Override
+            public String toString() {
+                return displayName;
+            }
+        }
+
+        @Expose
+        @ConfigOption(name = "Show Title", desc = "Show a Title when a pest spawns.")
+        @ConfigEditorBoolean
+        public boolean showTitle = true;
+
+        public enum SoundMode {
+            DEFAULT("Default"),
+            MUTED("Muted"),
+            CUSTOM("Custom"),
+            PLUMBER("Plumber");
+
+            private final String displayName;
+
+            SoundMode(String displayName) {
+                this.displayName = displayName;
+            }
+
+            @Override
+            public String toString() {
+                return displayName;
+            }
+        }
+
+        @Expose
+        @ConfigOption(name = "Spawn Sound", desc = "Mute or replace the default spawn sound with a custom one.")
+        @ConfigEditorDropdown
+        public SoundMode soundMode = SoundMode.DEFAULT;
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Sound Settings", desc = "")
+        public PestSpawnSound sound = new PestSpawnSound();
+    }
+
+    public static final class PestSpawnSound {
+        @Expose
+        @ConfigOption(name = "Notification Sound", desc = "The sound played for the notification.")
+        @ConfigEditorText
+        public String name = "block.note_block.bass";
+
+        @Expose
+        @ConfigOption(name = "Pitch", desc = "The pitch of the notification sound.")
+        @ConfigEditorSlider(minValue = 0.5f, maxValue = 2f, minStep = 0.1f)
+        public float pitch = 1.4920635f;
+
+        @Expose
+        @ConfigOption(name = "Repeat Frequency", desc = "Change how often the sound should be repeated in milliseconds.")
+        @ConfigEditorSlider(minValue = 50, maxValue = 1000, minStep = 50)
+        public int repeatFrequency = 150;
+
+        @Expose
+        @ConfigOption(name = "Repeat Amount", desc = "Change the amount of times the sound should be repeated.")
+        @ConfigEditorSlider(minValue = 1, maxValue = 20, minStep = 1)
+        public int repeatAmount = 3;
+
+        @ConfigOption(name = "Test Sound", desc = "Test current sound settings.")
+        @ConfigEditorButton(buttonText = "Test")
+        public Runnable testSound = com.epic60869.skyballs.features.garden.PestTimer::repeatSpawnSound;
+
+        @ConfigOption(name = "List of Sounds", desc = "A list of available sounds.")
+        @ConfigEditorButton(buttonText = "Open")
+        public Runnable listOfSounds = com.epic60869.skyballs.features.garden.PestTimer::openSoundsList;
     }
 
     /** Fishing, ported from Feesh (https://github.com/Sleepy-Panda/Feesh, Apache-2.0): see features/fishing. */
@@ -996,26 +1196,293 @@ public final class FeatureConfigs {
         public boolean pristineRecord = false;
     }
 
+    /** SkyHanni's SkillProgressConfig and its sub-configs (LGPL-2.1). Move the displays in /sb gui. */
     public static final class SkillProgress {
         @Expose
-        @ConfigOption(name = "Skill Progress", desc = "SkyHanni's Skill Progress display: the skill you're getting XP in, its level, a progress bar, percent and XP to the next level, XP per hour and the time until you level up. Move it in /sb gui.")
+        @ConfigOption(name = "Enabled", desc = "Show the Skill Progress Display.")
         @ConfigEditorBoolean
-        public boolean enabled = true;
+        public boolean enabled = false;
 
         @Expose
-        @ConfigOption(name = "Progress Bar", desc = "Show a progress bar to the next level.")
-        @ConfigEditorBoolean
-        public boolean progressBar = true;
+        @ConfigOption(name = "Text Alignment", desc = "Align the display text with the progress bar.")
+        @ConfigEditorDropdown
+        public TextAlignment textAlignmentProperty = TextAlignment.CENTERED;
+
+        public enum TextAlignment {
+            NONE("None", null),
+            CENTERED("Centered", 0),
+            LEFT("Left", -1),
+            RIGHT("Right", 1);
+
+            private final String displayName;
+            public final Integer alignment;
+
+            TextAlignment(String displayName, Integer alignment) {
+                this.displayName = displayName;
+                this.alignment = alignment;
+            }
+
+            @Override
+            public String toString() {
+                return displayName;
+            }
+        }
 
         @Expose
-        @ConfigOption(name = "XP/h and Time to Level", desc = "Show XP per hour (only counting time you're getting XP) and how long until the next level.")
+        @ConfigOption(name = "Hide In Action Bar", desc = "Hide the skill progress in the Hypixel action bar.")
         @ConfigEditorBoolean
-        public boolean rate = true;
+        public boolean hideInActionBar = false;
 
         @Expose
-        @ConfigOption(name = "Hide After (s)", desc = "Hide the display this long after your last XP gain. 0: keep showing the last skill.")
-        @ConfigEditorSlider(minValue = 0, maxValue = 300, minStep = 5)
-        public int hideAfter = 60;
+        @ConfigOption(name = "Always Show", desc = "Always show the skill progress.")
+        @ConfigEditorBoolean
+        public boolean alwaysShow = false;
+
+        @Expose
+        @ConfigOption(name = "Show Action left", desc = "Show action left until you reach the next level.")
+        @ConfigEditorBoolean
+        public boolean showActionLeft = false;
+
+        @Expose
+        @ConfigOption(name = "Use percentage", desc = "Use percentage instead of XP.")
+        @ConfigEditorBoolean
+        public boolean usePercentage = false;
+
+        @Expose
+        @ConfigOption(name = "Use Icon", desc = "Show the skill icon in the display.")
+        @ConfigEditorBoolean
+        public boolean useIcon = true;
+
+        @Expose
+        @ConfigOption(name = "Use Skill Name", desc = "Show the skill name in the display.")
+        @ConfigEditorBoolean
+        public boolean useSkillName = false;
+
+        @Expose
+        @ConfigOption(name = "Show Level", desc = "Show your current level in the display.")
+        @ConfigEditorBoolean
+        public boolean showLevel = true;
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Progress Bar", desc = "Progress Bar Config.")
+        public SkillProgressBar skillProgressBarConfig = new SkillProgressBar();
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Overflow", desc = "Overflow Config.")
+        public SkillOverflow overflowConfig = new SkillOverflow();
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Custom Goal", desc = "Define a custom goal for each skill.")
+        public SkillCustomGoal customGoalConfig = new SkillCustomGoal();
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "All Skill Display", desc = "All Skill Display Config.")
+        public AllSkillDisplay allSkillDisplayConfig = new AllSkillDisplay();
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "ETA Display", desc = "ETA Display Config.")
+        public SkillEtaDisplay skillETADisplayConfig = new SkillEtaDisplay();
+    }
+
+    public static final class SkillProgressBar {
+        @Expose
+        @ConfigOption(name = "Enabled", desc = "Enable or disable the progress bar.")
+        @ConfigEditorBoolean
+        public boolean enabled = false;
+
+        @Expose
+        @ConfigOption(name = "Textured Bar", desc = "Use a textured progress bar.\n§eCan be changed with a resource pack.")
+        @ConfigEditorBoolean
+        public boolean useTexturedBar = false;
+
+        @Expose
+        @ConfigOption(name = "Chroma", desc = "Use the SBA like chroma effect on the bar.\n§eIf enabled, ignore the Bar Color setting.")
+        @ConfigEditorBoolean
+        public boolean useChroma = false;
+
+        @Expose
+        @ConfigOption(name = "Bar Color", desc = "Color of the progress bar.\n§eIgnored if Chroma is enabled.")
+        @ConfigEditorColour
+        public String barStartColor = "0:255:255:0:0";
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Textured Bar", desc = "")
+        public TexturedBar texturedBar = new TexturedBar();
+
+        public static final class TexturedBar {
+            @Expose
+            @ConfigOption(name = "Used Texture", desc = "Choose what texture to use.")
+            @ConfigEditorDropdown
+            public UsedTexture usedTexture = UsedTexture.MATCH_PACK;
+
+            public enum UsedTexture {
+                MATCH_PACK("Match Resource Pack", "minecraft:hud/experience_bar"),
+                CUSTOM_1("Texture 1", "skyballs:textures/bars/1.png"),
+                CUSTOM_2("Texture 2", "skyballs:textures/bars/2.png"),
+                CUSTOM_3("Texture 3", "skyballs:textures/bars/3.png"),
+                CUSTOM_4("Texture 4", "skyballs:textures/bars/4.png"),
+                CUSTOM_5("Texture 5", "skyballs:textures/bars/5.png");
+
+                private final String displayName;
+                public final String path;
+
+                UsedTexture(String displayName, String path) {
+                    this.displayName = displayName;
+                    this.path = path;
+                }
+
+                @Override
+                public String toString() {
+                    return displayName;
+                }
+            }
+
+            @Expose
+            @ConfigOption(name = "Width", desc = "Modify the width of the bar.\n§eDefault: 182\n§c!!Does not work for now!!")
+            @ConfigEditorSlider(minStep = 1, minValue = 16, maxValue = 1024)
+            public int width = 182;
+
+            @Expose
+            @ConfigOption(name = "Height", desc = "Modify the height of the bar.\n§eDefault: 5\n§c!!Does not work for now!!")
+            @ConfigEditorSlider(minStep = 1, minValue = 3, maxValue = 16)
+            public int height = 5;
+        }
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Regular Bar", desc = "")
+        public RegularBar regularBar = new RegularBar();
+
+        public static final class RegularBar {
+            @Expose
+            @ConfigOption(name = "Width", desc = "Modify the width of the bar.")
+            @ConfigEditorSlider(minStep = 1, minValue = 100, maxValue = 1000)
+            public int width = 182;
+
+            @Expose
+            @ConfigOption(name = "Height", desc = "Modify the height of the bar.")
+            @ConfigEditorSlider(minStep = 1, minValue = 3, maxValue = 15)
+            public int height = 6;
+        }
+    }
+
+    public static final class SkillOverflow {
+        @Expose
+        @ConfigOption(name = "Display", desc = "Enable the overflow calculation in the progress display.")
+        @ConfigEditorBoolean
+        public boolean enableInDisplay = false;
+
+        @Expose
+        @ConfigOption(name = "All Skill Display", desc = "Enable the overflow calculation in the all skill progress display.")
+        @ConfigEditorBoolean
+        public boolean enableInAllDisplay = false;
+
+        @Expose
+        @ConfigOption(name = "ETA Display", desc = "Enable the overflow calculation in the ETA skill display.")
+        @ConfigEditorBoolean
+        public boolean enableInEtaDisplay = false;
+
+        @Expose
+        @ConfigOption(name = "Progress Bar", desc = "Enable the overflow calculation in the progress bar of the display.")
+        @ConfigEditorBoolean
+        public boolean enableInProgressBar = false;
+
+        @Expose
+        @ConfigOption(name = "Skill Menu Stack Size", desc = "Enable the overflow calculation when the 'Skill Level' Item Number is enabled.")
+        @ConfigEditorBoolean
+        public boolean enableInSkillMenuAsStackSize = false;
+
+        @Expose
+        @ConfigOption(name = "Skill Menu Tooltips", desc = "Enable the overflow calculation in the tooltip of items in skills menu.")
+        @ConfigEditorBoolean
+        public boolean enableInSkillMenuTooltip = false;
+
+        @Expose
+        @ConfigOption(name = "Chat", desc = "Enable the overflow level up message when you gain an overflow level.")
+        @ConfigEditorBoolean
+        public boolean enableInChat = false;
+    }
+
+    public static final class SkillCustomGoal {
+        @Expose
+        @ConfigOption(name = "Display", desc = "Enable the custom goal in the progress display.")
+        @ConfigEditorBoolean
+        public boolean enableInDisplay = true;
+
+        @Expose
+        @ConfigOption(name = "All Skill Display", desc = "Enable the custom goal in the all skill display.")
+        @ConfigEditorBoolean
+        public boolean enableInAllDisplay = false;
+
+        @Expose
+        @ConfigOption(name = "ETA Display", desc = "Enable the custom goal in the ETA skill display.")
+        @ConfigEditorBoolean
+        public boolean enableInETADisplay = false;
+
+        @Expose
+        @ConfigOption(name = "Progress Bar", desc = "Enable the custom goal in the progress bar.")
+        @ConfigEditorBoolean
+        public boolean enableInProgressBar = true;
+
+        @Expose
+        @ConfigOption(name = "Skill Menu Tooltips", desc = "Enable the custom goal in the tooltip of items in skills menu.")
+        @ConfigEditorBoolean
+        public boolean enableInSkillMenuTooltip = false;
+
+        @Expose
+        @ConfigOption(name = "Chat", desc = "Send a message when you reach your goal.")
+        @ConfigEditorBoolean
+        public boolean enableInChat = false;
+    }
+
+    public static final class AllSkillDisplay {
+        @Expose
+        @ConfigOption(name = "Enabled", desc = "Show a display with all skills progress.")
+        @ConfigEditorBoolean
+        public boolean enabled = false;
+
+        @Expose
+        @ConfigOption(name = "Text", desc = "Choose what skills you want to see in the display.")
+        @ConfigEditorDraggableList
+        public List<com.epic60869.skyballs.features.skills.SkillType> skillEntryList = new ArrayList<>(List.of(com.epic60869.skyballs.features.skills.SkillType.COMBAT, com.epic60869.skyballs.features.skills.SkillType.FARMING, com.epic60869.skyballs.features.skills.SkillType.FISHING, com.epic60869.skyballs.features.skills.SkillType.MINING, com.epic60869.skyballs.features.skills.SkillType.FORAGING, com.epic60869.skyballs.features.skills.SkillType.ENCHANTING, com.epic60869.skyballs.features.skills.SkillType.ALCHEMY, com.epic60869.skyballs.features.skills.SkillType.CARPENTRY, com.epic60869.skyballs.features.skills.SkillType.TAMING));
+    }
+
+    public static final class SkillEtaDisplay {
+        @Expose
+        @ConfigOption(name = "Enabled", desc = "Show a display of your current active skill with the XP/hour rate, ETA to the next level and current session time.")
+        @ConfigEditorBoolean
+        public boolean enabled = false;
+
+        @Expose
+        @ConfigOption(name = "Farming", desc = "After how many seconds should the Farming session timer pause.")
+        @ConfigEditorSlider(minStep = 1, minValue = 3, maxValue = 60)
+        public int farmingPauseTime = 3;
+
+        @Expose
+        @ConfigOption(name = "Mining", desc = "After how many seconds should the Mining session timer pause.")
+        @ConfigEditorSlider(minStep = 1, minValue = 3, maxValue = 60)
+        public int miningPauseTime = 3;
+
+        @Expose
+        @ConfigOption(name = "Combat", desc = "After how many seconds should the Combat session timer pause.")
+        @ConfigEditorSlider(minStep = 1, minValue = 3, maxValue = 60)
+        public int combatPauseTime = 30;
+
+        @Expose
+        @ConfigOption(name = "Foraging", desc = "After how many seconds should the Foraging session timer pause.")
+        @ConfigEditorSlider(minStep = 1, minValue = 3, maxValue = 60)
+        public int foragingPauseTime = 3;
+
+        @Expose
+        @ConfigOption(name = "Fishing", desc = "After how many seconds should the Fishing session timer pause.")
+        @ConfigEditorSlider(minStep = 1, minValue = 3, maxValue = 60)
+        public int fishingPauseTime = 15;
     }
 
     public static final class Foraging {
