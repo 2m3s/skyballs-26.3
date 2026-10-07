@@ -4,7 +4,6 @@ import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.features.FeatureConfigs;
 import com.epic60869.skyballs.features.core.SkyBallsHuds;
 import com.epic60869.skyballs.features.core.SkyBallsLocation;
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
@@ -156,7 +155,8 @@ public final class SkillProgress {
         return result;
     }
 
-    private static Component removeText(Component message, String text) {
+    /** The message without {@code text} (matched ignoring colour codes) and the spaces before it; other parts keep their colours. */
+    public static Component removeText(Component message, String text) {
         List<String> values = new ArrayList<>();
         List<Style> styles = new ArrayList<>();
         StringBuilder plain = new StringBuilder();
@@ -669,7 +669,7 @@ public final class SkillProgress {
 
     private static int colour(String chroma) {
         try {
-            return 0xFF000000 | ChromaColour.forLegacyString(chroma).getEffectiveColourRGB();
+            return 0xFF000000 | com.epic60869.skyballs.custom.util.ChromaColours.parse(chroma).getEffectiveColourRGB();
         } catch (Exception e) {
             return 0xFFFF0000;
         }

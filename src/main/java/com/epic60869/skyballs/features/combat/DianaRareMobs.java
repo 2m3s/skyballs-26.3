@@ -8,7 +8,6 @@ import com.epic60869.skyballs.features.core.SkyBallsAlerts;
 import com.epic60869.skyballs.features.core.SkyBallsLocation;
 import com.epic60869.skyballs.features.core.SkyBallsWorldRender;
 import com.epic60869.skyballs.sb.utils.render.primitive.PrimitiveCollector;
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -1192,7 +1191,7 @@ public final class DianaRareMobs {
 
     private static int rgb(String value, int fallback) {
         try {
-            return ChromaColour.forLegacyString(value).getEffectiveColourRGB() & 0xFFFFFF;
+            return com.epic60869.skyballs.custom.util.ChromaColours.parse(value).getEffectiveColourRGB() & 0xFFFFFF;
         } catch (Exception e) {
             return fallback;
         }

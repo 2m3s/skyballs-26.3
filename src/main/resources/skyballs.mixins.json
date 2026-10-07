@@ -65,6 +65,7 @@
     "SkyBallsAvatarNameTagMixin",
     "SkyBallsPlayerSizeMixin",
     "SkyBallsBossBarMixin",
+    "SkyBallsBossOverlayAccessor",
     "SkyBallsLevelExtractorMixin",
     "SkyBallsTooltipMixin",
     "SkyBallsToggleSprintMixin",

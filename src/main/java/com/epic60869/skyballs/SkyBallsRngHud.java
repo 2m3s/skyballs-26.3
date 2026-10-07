@@ -101,7 +101,7 @@ public final class SkyBallsRngHud {
     private static int colour(String special, int fallback) {
         if (special == null || special.isEmpty()) return fallback;
         try {
-            return 0xFF000000 | io.github.notenoughupdates.moulconfig.ChromaColour.forLegacyString(special).getEffectiveColourRGB();
+            return 0xFF000000 | com.epic60869.skyballs.custom.util.ChromaColours.parse(special).getEffectiveColourRGB();
         } catch (Exception e) {
             return fallback;
         }

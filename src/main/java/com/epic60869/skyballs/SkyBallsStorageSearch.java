@@ -422,7 +422,7 @@ public final class SkyBallsStorageSearch {
         if ("INVENTORY".equals(result.type())) {
             return;
         }
-        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen)) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>)) return;
         // The highlight stays until it times out, like SkyOcean's.
     }
 

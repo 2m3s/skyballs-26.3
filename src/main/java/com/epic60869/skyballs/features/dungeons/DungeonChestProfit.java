@@ -2,17 +2,22 @@ package com.epic60869.skyballs.features.dungeons;
 
 import com.epic60869.skyballs.ItemPriceResolver;
 import com.epic60869.skyballs.SkyBallsConfig;
-import com.epic60869.skyballs.custom.RepoItems;
+import com.epic60869.skyballs.SkyBallsPriceTooltip;
 import com.epic60869.skyballs.custom.util.Compat;
 import com.epic60869.skyballs.features.FeatureConfigs;
-import com.epic60869.skyballs.mixin.SkyBallsContainerScreenAccessor;
+import com.epic60869.skyballs.features.core.SkyBallsLocation;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -20,42 +25,45 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * Dungeon reward chest profit, like Skyblocker's chest value and Croesus profit: in a reward chest, its contents' value
- * minus its cost above the chest; in Croesus's menu for a run, each chest's profit with the best one highlighted; and
- * in Croesus's list of runs, each run tinted by whether its chests are still unopened, partly opened or all claimed.
+ * NoFrills' Dungeon Chest Value and Croesus Solver (features/dungeons, BSD-3-Clause), for dungeon reward chests:
+ * <ul>
+ *     <li>In a reward chest (at the end of a run, or opened at Croesus): "Chest Value: x" over the chest, its contents'
+ *     worth (lowest BIN, else bazaar instant sell; the fish and discs at their NPC price) minus the chest's cost.</li>
+ *     <li>In Croesus's (or Vesuvius's) list of runs: each run coloured by whether its chests are unopened, unopened
+ *     after a Kismet reroll, opened, or opened with a key too, with its floor ("F7", "M7") on it.</li>
+ *     <li>In a run's chest menu: the most profitable chest highlighted (pink when it's very valuable or holds a dye),
+ *     and the second best too (aqua when it's still worth a Dungeon Chest Key), with each chest's value in its tooltip.</li>
+ * </ul>
  */
 public final class DungeonChestProfit {
-    private static final Pattern CHEST = Pattern.compile("^(?:Wood|Gold|Diamond|Emerald|Obsidian|Bedrock)(?: Chest)?$");
-    private static final Pattern CHEST_HEAD = Pattern.compile("^(?:Wood|Gold|Diamond|Emerald|Obsidian|Bedrock)(?: Chest)?");
-    private static final Pattern CROESUS_RUN = Pattern.compile("^(?:Master )?Catacombs - Floor [IV]+$");
-    private static final Pattern COUNT = Pattern.compile("^(?<name>.+?) x(?<count>[\\d,]+)$");
-    private static final Pattern ESSENCE = Pattern.compile("^(?<type>\\w+) Essence$");
-    private static final Pattern BOOK = Pattern.compile("^Enchanted Book \\((?<enchant>.+)\\)$");
-    private static final Pattern ENCHANT = Pattern.compile("^(?<name>[A-Za-z' -]+?) (?<level>[IVX]+)$");
-    private static final Pattern COINS = Pattern.compile("^(?<amount>[\\d,]+) Coins$");
-    private static final long RECALC_MS = 500L;
+    private static final Set<String> CHEST_NAMES = Set.of("Wood", "Gold", "Diamond", "Emerald", "Obsidian", "Bedrock");
+    private static final Set<String> NPC_SELL_ITEMS = Set.of("STORM_THE_FISH", "MAXOR_THE_FISH", "GOLDOR_THE_FISH",
+        "DUNGEON_DISC_1", "DUNGEON_DISC_2", "DUNGEON_DISC_3", "DUNGEON_DISC_4", "DUNGEON_DISC_5");
+    private static final Pattern ITEM_QUANTITY = Pattern.compile(".* x[0-9]*");
+    private static final Pattern CROESUS = Pattern.compile("(?:|\\([0-9]*/[0-9]*\\) )Croesus");
+    private static final Pattern VESUVIUS = Pattern.compile("(?:|\\([0-9]*/[0-9]*\\) )Vesuvius");
+    private static final Set<String> LOOT_AREAS = Set.of("Catacombs", "Kuudra", "Dungeon Hub", "Crimson Isle");
 
-    /** Item name -> SkyBlock id ("" when unknown), as name lookups go through every item. */
-    private static final Map<String, String> IDS = new HashMap<>();
+    private enum LootState { UNOPENED, REROLLED, OPENED, OPENED_KEY, UNKNOWN }
 
-    /** One chest: what it holds is worth {@code value}, it costs {@code cost}; {@code opened} at Croesus. */
-    private record Chest(double value, double cost, boolean opened) {
-        double profit() {
-            return value - cost;
-        }
-    }
-
-    private static Map<Integer, Chest> croesusChests = Map.of();
-    private static Chest openChest;
-    private static long calculatedAt;
+    /** The open reward chest's value (0 = nothing to show). */
+    private static double currentValue;
+    /** Slot index -> background colour (ARGB), and floor labels, for the open Croesus menus. */
+    private static Map<Integer, Integer> backgrounds = Map.of();
+    private static Map<Integer, String> labels = Map.of();
+    /** Slot index -> the chest's value minus its cost, in a run's chest menu. */
+    private static Map<Integer, Double> chestValues = Map.of();
+    private static int ticks;
 
     private DungeonChestProfit() {}
 
@@ -66,255 +74,361 @@ public final class DungeonChestProfit {
 
     public static void init() {
         ScreenEvents.AFTER_INIT.register((client, screen, w, h) -> {
+            clear();
             if (!(screen instanceof AbstractContainerScreen<?> container)) return;
             ItemPriceResolver.warmup();
-            calculatedAt = 0;
-            ScreenEvents.afterExtract(screen).register((s, g, mouseX, mouseY, delta) -> render(container, g));
+            SkyBallsPriceTooltip.warmup();
+            ScreenEvents.afterExtract(screen).register((s, g, mouseX, mouseY, delta) -> renderChestValue(container, g));
+        });
+        ClientTickEvents.END_CLIENT_TICK.register(mc -> {
+            if (++ticks % 5 != 0) return;
+            if (mc.gui.screen() instanceof AbstractContainerScreen<?> screen && isInLootArea()) update(screen);
+            else clear();
+        });
+        ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
+            FeatureConfigs.ChestProfit config = config();
+            if (config == null || !config.croesusSolver || !config.valueTooltip || chestValues.isEmpty() || !isInLootArea()) return;
+            if (!(Minecraft.getInstance().gui.screen() instanceof AbstractContainerScreen<?> screen)) return;
+            for (Slot slot : screen.getMenu().slots) {
+                if (slot.getItem() != stack) continue;
+                Double value = chestValues.get(slot.index);
+                if (value == null || slot.container instanceof Inventory) return;
+                lines.add(Component.literal("[SB] ").withStyle(ChatFormatting.LIGHT_PURPLE)
+                    .append(Component.literal("Chest Value: ").withStyle(ChatFormatting.AQUA))
+                    .append(Component.literal(separator(value)).withStyle(value > 0 ? ChatFormatting.GREEN : ChatFormatting.RED)));
+                return;
+            }
         });
     }
 
-    private static String title(AbstractContainerScreen<?> screen) {
-        String title = ChatFormatting.stripFormatting(screen.getTitle().getString());
-        return title == null ? "" : title.trim();
+    private static void clear() {
+        currentValue = 0;
+        if (!backgrounds.isEmpty()) backgrounds = Map.of();
+        if (!labels.isEmpty()) labels = Map.of();
+        if (!chestValues.isEmpty()) chestValues = Map.of();
     }
 
-    private static void render(AbstractContainerScreen<?> screen, GuiGraphicsExtractor g) {
+    private static boolean isInLootArea() {
+        return Compat.isOnSkyblock() && (SkyBallsLocation.inDungeon() || LOOT_AREAS.contains(SkyBallsLocation.area()));
+    }
+
+    private static String title(Screen screen) {
+        return ChatFormatting.stripFormatting(screen.getTitle().getString()).trim();
+    }
+
+    private static void update(AbstractContainerScreen<?> screen) {
         FeatureConfigs.ChestProfit config = config();
-        if (config == null || !Compat.isOnSkyblock()) return;
+        if (config == null) return;
         String title = title(screen);
-        if (config.chest && CHEST.matcher(title).matches()) renderRewardChest(screen, g, config);
-        else if (config.croesusChests && CROESUS_RUN.matcher(title).matches()) renderCroesusRun(screen, g, config);
-        else if (config.croesusRuns && title.equals("Croesus")) renderCroesusRuns(screen, g);
-    }
-
-    // ------------------------------------------------------------------------------------------------ reward chest
-
-    private static void renderRewardChest(AbstractContainerScreen<?> screen, GuiGraphicsExtractor g, FeatureConfigs.ChestProfit config) {
-        long now = System.currentTimeMillis();
-        if (now - calculatedAt > RECALC_MS) {
-            calculatedAt = now;
-            openChest = rewardChest(screen, config);
+        currentValue = config.chestValue && isChest(title) ? rewardChestValue(screen) : 0;
+        if (!config.croesusSolver) {
+            backgrounds = Map.of();
+            labels = Map.of();
+            chestValues = Map.of();
+            return;
         }
-        if (openChest == null) return;
-        SkyBallsContainerScreenAccessor accessor = (SkyBallsContainerScreenAccessor) screen;
-        int centre = accessor.skyballs$getLeftPos() + accessor.skyballs$getImageWidth() / 2;
-        int y = accessor.skyballs$getTopPos() - 12;
-        Component text = Component.literal("Profit: ").withStyle(ChatFormatting.GRAY).append(profitText(openChest.profit()))
-            .append(Component.literal("  (worth " + coins(openChest.value()) + ", costs " + coins(openChest.cost()) + ")").withStyle(ChatFormatting.DARK_GRAY));
-        g.centeredText(Minecraft.getInstance().font, text, centre, y, 0xFFFFFFFF);
+        if (CROESUS.matcher(title).matches() || VESUVIUS.matcher(title).matches()) {
+            highlightLoot(screen, config);
+        } else if (title.startsWith("Catacombs - Floor") || title.startsWith("Master Catacombs - Floor")) {
+            highlightChests(screen, config);
+        } else {
+            backgrounds = Map.of();
+            labels = Map.of();
+            chestValues = Map.of();
+        }
     }
 
-    /** The open reward chest: its items' value and the cost on its "Open Reward Chest" button; null while it's empty. */
-    private static Chest rewardChest(AbstractContainerScreen<?> screen, FeatureConfigs.ChestProfit config) {
-        double value = 0, cost = 0;
-        boolean anything = false;
+    // ------------------------------------------------------------------------------------------------ chest value
+
+    private static boolean isChest(String title) {
+        for (String name : CHEST_NAMES) {
+            if (title.equals(name) || (title.startsWith(name) && title.endsWith("Chest"))) return true;
+        }
+        return false;
+    }
+
+    private static double rewardChestValue(AbstractContainerScreen<?> screen) {
+        double value = 0;
         for (Slot slot : screen.getMenu().slots) {
-            if (slot.container instanceof Inventory || !slot.hasItem()) continue;
+            if (slot.container instanceof Inventory) continue;
             ItemStack stack = slot.getItem();
-            List<String> lore = lore(stack);
-            int costLine = indexOf(lore, "Cost");
-            if (costLine >= 0) {
-                cost = cost(lore, costLine);
+            if (stack.isEmpty() || stack.is(Items.STAINED_GLASS_PANE.pick(net.minecraft.world.item.DyeColor.BLACK))) continue;
+            String name = ChatFormatting.stripFormatting(stack.getHoverName().getString());
+            String id = lootId(stack, name);
+            if (id.isEmpty()) {
+                if (name.equals("Open Reward Chest")) {
+                    for (String line : lore(stack)) {
+                        if (line.endsWith(" Coins")) {
+                            value -= parseInt(line.replace(" Coins", "").replace(",", ""));
+                            break;
+                        }
+                    }
+                }
                 continue;
             }
-            if (isFiller(stack)) continue;
-            String name = ChatFormatting.stripFormatting(stack.getHoverName().getString());
-            if (name == null) continue;
-            if (!config.includeEssence && ESSENCE.matcher(stripCount(name.trim())).matches()) continue;
-            double itemValue = stackValue(stack, name.trim());
-            if (itemValue > 0 || !name.isBlank()) anything = true;
-            value += itemValue;
+            value += lootValue(id) * lootQuantity(stack, name);
         }
-        return anything ? new Chest(value, cost, false) : null;
-    }
-
-    private static boolean isFiller(ItemStack stack) {
-        return stack.is(Items.ARROW)
-            || stack.is(Items.BARRIER) || stack.is(Items.CHEST) || stack.getItem().toString().contains("glass_pane");
-    }
-
-    private static double stackValue(ItemStack stack, String name) {
-        String id = Compat.neuName(stack);
-        if (!id.isBlank()) {
-            double value = ItemPriceResolver.value(id);
-            if (value > 0) {
-                Matcher count = COUNT.matcher(name);
-                return value * (count.matches() ? parseInt(count.group("count")) : stack.getCount());
-            }
-        }
-        return lineValue(name) * (COUNT.matcher(name).matches() ? 1 : stack.getCount());
-    }
-
-    // ------------------------------------------------------------------------------------------------ croesus
-
-    private static void renderCroesusRun(AbstractContainerScreen<?> screen, GuiGraphicsExtractor g, FeatureConfigs.ChestProfit config) {
-        long now = System.currentTimeMillis();
-        if (now - calculatedAt > RECALC_MS) {
-            calculatedAt = now;
-            croesusChests = croesusChests(screen, config);
-        }
-        if (croesusChests.isEmpty()) return;
-        int best = -1;
-        double bestProfit = -Double.MAX_VALUE;
-        for (Map.Entry<Integer, Chest> e : croesusChests.entrySet()) {
-            if (!e.getValue().opened() && e.getValue().profit() > bestProfit) {
-                bestProfit = e.getValue().profit();
-                best = e.getKey();
-            }
-        }
-        SkyBallsContainerScreenAccessor accessor = (SkyBallsContainerScreenAccessor) screen;
-        int left = accessor.skyballs$getLeftPos(), top = accessor.skyballs$getTopPos();
-        var font = Minecraft.getInstance().font;
-        for (Map.Entry<Integer, Chest> e : croesusChests.entrySet()) {
-            Slot slot = screen.getMenu().slots.get(e.getKey());
-            int x = left + slot.x, y = top + slot.y;
-            Chest chest = e.getValue();
-            if (chest.opened()) g.fill(x, y, x + 16, y + 16, 0xA0202020);
-            else if (e.getKey() == best) g.fill(x, y, x + 16, y + 16, bestProfit >= 0 ? 0x6000FF00 : 0x60FF0000);
-            // The profit, small, along the bottom of the slot.
-            Component text = chest.opened() ? Component.literal("Opened").withStyle(ChatFormatting.GRAY) : profitText(chest.profit());
-            g.pose().pushMatrix();
-            g.pose().translate(x + 8, y + 12);
-            g.pose().scale(0.55f, 0.55f);
-            g.centeredText(font, text, 0, 0, 0xFFFFFFFF);
-            g.pose().popMatrix();
-        }
-    }
-
-    /** Slot index -> chest, from the chest heads' lore ("Contents", the items, a blank line, "Cost", the cost). */
-    private static Map<Integer, Chest> croesusChests(AbstractContainerScreen<?> screen, FeatureConfigs.ChestProfit config) {
-        Map<Integer, Chest> chests = new HashMap<>();
-        List<Slot> slots = screen.getMenu().slots;
-        for (int i = 0; i < slots.size(); i++) {
-            Slot slot = slots.get(i);
-            if (slot.container instanceof Inventory || !slot.hasItem()) continue;
-            String name = ChatFormatting.stripFormatting(slot.getItem().getHoverName().getString());
-            if (name == null || !CHEST_HEAD.matcher(name.trim()).find()) continue;
-            List<String> lore = lore(slot.getItem());
-            int contents = indexOf(lore, "Contents");
-            if (contents < 0) continue;
-            double value = 0;
-            for (int line = contents + 1; line < lore.size() && !lore.get(line).isBlank(); line++) {
-                String item = lore.get(line).trim();
-                if (!config.includeEssence && ESSENCE.matcher(stripCount(item)).matches()) continue;
-                value += lineValue(item);
-            }
-            int costLine = indexOf(lore, "Cost");
-            double cost = costLine < 0 ? 0 : cost(lore, costLine);
-            boolean opened = lore.stream().anyMatch(l -> l.toLowerCase(Locale.ROOT).contains("already opened")
-                || l.toLowerCase(Locale.ROOT).contains("already been opened"));
-            chests.put(i, new Chest(value, cost, opened));
-        }
-        return chests;
-    }
-
-    /** Croesus's list of runs: green while no chest is opened, yellow when one is, red when none are left. */
-    private static void renderCroesusRuns(AbstractContainerScreen<?> screen, GuiGraphicsExtractor g) {
-        SkyBallsContainerScreenAccessor accessor = (SkyBallsContainerScreenAccessor) screen;
-        int left = accessor.skyballs$getLeftPos(), top = accessor.skyballs$getTopPos();
-        for (Slot slot : screen.getMenu().slots) {
-            if (slot.container instanceof Inventory || !slot.hasItem()) continue;
-            String lore = String.join("\n", lore(slot.getItem())).toLowerCase(Locale.ROOT);
-            int colour;
-            if (lore.contains("no more chests to open")) colour = 0x70FF3030;
-            else if (lore.contains("opened chest:")) colour = 0x70FFD000;
-            else if (lore.contains("no chests opened yet") || lore.contains("chests expire in")) colour = 0x7000FF00;
-            else continue;
-            int x = left + slot.x, y = top + slot.y;
-            g.fill(x, y, x + 16, y + 16, colour);
-        }
-    }
-
-    // ------------------------------------------------------------------------------------------------ prices
-
-    /** The cost under the "Cost" line: coins and/or a Dungeon Chest Key; "FREE" is 0. */
-    private static double cost(List<String> lore, int costLine) {
-        double cost = 0;
-        for (int i = costLine + 1; i < lore.size() && !lore.get(i).isBlank(); i++) {
-            String line = lore.get(i).trim();
-            Matcher coins = COINS.matcher(line);
-            if (coins.matches()) cost += parseInt(coins.group("amount"));
-            else if (line.contains("Dungeon Chest Key")) cost += ItemPriceResolver.value("DUNGEON_CHEST_KEY");
-        }
-        return cost;
-    }
-
-    /** The value of one contents line: "Wither Essence x15", "Enchanted Book (Ultimate Wise I)", "Necron's Handle"... */
-    private static double lineValue(String line) {
-        int count = 1;
-        Matcher m = COUNT.matcher(line);
-        String name = line;
-        if (m.matches()) {
-            name = m.group("name").trim();
-            count = parseInt(m.group("count"));
-        }
-        Matcher essence = ESSENCE.matcher(name);
-        if (essence.matches()) return count * ItemPriceResolver.value("ESSENCE_" + essence.group("type").toUpperCase(Locale.ROOT));
-        Matcher book = BOOK.matcher(name);
-        if (book.matches()) return count * enchantValue(book.group("enchant"));
-        String id = idFor(name);
-        double value = id.isEmpty() ? 0 : ItemPriceResolver.value(id);
-        if (value <= 0) value = enchantValue(name);
-        if (value <= 0) value = ItemPriceResolver.valueByName(name);
-        return count * value;
-    }
-
-    /** "Ultimate Wise I" -> ENCHANTMENT_ULTIMATE_WISE_1's price; ultimate enchants without "Ultimate" in the name too. */
-    private static double enchantValue(String enchant) {
-        Matcher m = ENCHANT.matcher(enchant.trim());
-        if (!m.matches()) return 0;
-        String name = m.group("name").replaceAll("[^A-Za-z ]", "").trim().toUpperCase(Locale.ROOT).replace(' ', '_');
-        int level = roman(m.group("level"));
-        double value = ItemPriceResolver.value("ENCHANTMENT_" + name + "_" + level);
-        if (value <= 0 && !name.startsWith("ULTIMATE_")) value = ItemPriceResolver.value("ENCHANTMENT_ULTIMATE_" + name + "_" + level);
         return value;
     }
 
-    private static String idFor(String name) {
-        synchronized (IDS) {
-            String cached = IDS.get(name);
-            if (cached != null) return cached;
+    /** NoFrills' getLootValue: the fish and discs at their NPC price, the rest lowest BIN, else bazaar instant sell. */
+    private static double lootValue(String id) {
+        if (NPC_SELL_ITEMS.contains(id)) return ItemPriceResolver.npcPrice(id);
+        return SkyBallsPriceTooltip.unitPrice(id);
+    }
+
+    private static int lootQuantity(ItemStack stack, String name) {
+        String[] parts = name.split(" ");
+        String last = parts[parts.length - 1];
+        if (last.startsWith("x")) {
+            int parsed = parseInt(last.replace("x", "").replace(",", ""));
+            return parsed > 0 ? parsed : stack.getCount();
         }
-        String found = "";
-        for (String id : RepoItems.idsByName(name)) {
-            if (ItemPriceResolver.value(id) > 0) {
-                found = id;
-                break;
+        return stack.getCount();
+    }
+
+    private static String lootId(ItemStack stack, String name) {
+        if (name.startsWith("Wither Essence")) return "ESSENCE_WITHER";
+        if (name.startsWith("Undead Essence")) return "ESSENCE_UNDEAD";
+        return SkyBallsPriceTooltip.marketId(stack);
+    }
+
+    private static void renderChestValue(AbstractContainerScreen<?> screen, GuiGraphicsExtractor g) {
+        FeatureConfigs.ChestProfit config = config();
+        if (config == null || !config.chestValue || currentValue == 0) return;
+        // Not over the Case Opening spin: it would give away what's inside before the spin lands.
+        if (CaseOpening.hidesMenu(screen)) return;
+        List<Slot> slots = screen.getMenu().slots;
+        if (slots.size() <= 4) return;
+        var accessor = (com.epic60869.skyballs.sb.mixins.accessors.AbstractContainerScreenAccessor) screen;
+        Slot target = slots.get(4);
+        var font = Minecraft.getInstance().font;
+        String text = "Chest Value: " + separator(currentValue);
+        int width = font.width(text);
+        int baseX = accessor.getX() + target.x + 8, baseY = accessor.getY() + target.y + 8;
+        g.fill((int) Math.floor(baseX - 2 - width * 0.5), baseY - 6, (int) Math.ceil(baseX + 2 + width * 0.5), baseY + 6, colour(config.background, 0xCC202020));
+        g.centeredText(font, Component.literal(text), baseX, baseY - 4, currentValue > 0 ? 0xFF55FF55 : 0xFFFF5555);
+    }
+
+    // ------------------------------------------------------------------------------------------------ croesus solver
+
+    private static LootState lootState(ItemStack stack) {
+        ItemLore lore = stack.get(DataComponents.LORE);
+        if (lore == null) return LootState.UNKNOWN;
+        for (Component line : lore.lines()) {
+            String text = ChatFormatting.stripFormatting(line.getString());
+            if (text.equals("No chests opened yet!")) {
+                for (Component other : lore.lines()) {
+                    Optional<Style> style = styleOf(other, s -> s.endsWith("Kismet Feather"));
+                    if (style.isPresent() && style.get().isStrikethrough()) return LootState.REROLLED;
+                }
+                return LootState.UNOPENED;
+            }
+            if (text.startsWith("Opened Chest: ")) return LootState.OPENED;
+            if (text.equals("No more chests to open!")) return LootState.OPENED_KEY;
+        }
+        return LootState.UNKNOWN;
+    }
+
+    private static void highlightLoot(AbstractContainerScreen<?> screen, FeatureConfigs.ChestProfit config) {
+        Map<Integer, Integer> colours = new HashMap<>();
+        Map<Integer, String> floorLabels = new HashMap<>();
+        for (Slot slot : screen.getMenu().slots) {
+            if (slot.container instanceof Inventory) continue;
+            ItemStack stack = slot.getItem();
+            if (stack.isEmpty()) continue;
+            String name = ChatFormatting.stripFormatting(stack.getHoverName().getString());
+            if (!name.endsWith("The Catacombs")) continue;
+            String colour = switch (lootState(stack)) {
+                case UNOPENED -> config.unopenedColor;
+                case REROLLED -> config.rerolledColor;
+                case OPENED -> config.openedColor;
+                case OPENED_KEY -> config.openedKeyColor;
+                case UNKNOWN -> null;
+            };
+            if (colour == null) continue;
+            colours.put(slot.index, colour(colour, 0x8055FF55));
+            if (config.floorLabel) {
+                List<String> lore = lore(stack);
+                if (!lore.isEmpty()) {
+                    String floorLine = lore.getFirst();
+                    int floor = roman(floorLine.substring(floorLine.lastIndexOf(' ') + 1));
+                    floorLabels.put(slot.index, (name.startsWith("Master Mode") ? "M" : "F") + floor);
+                }
             }
         }
-        // Not cached until prices are in, or an item would stay at 0 for the session.
-        if (!found.isEmpty() || !RepoItems.idsByName(name).isEmpty() && RepoItems.itemsLoaded()) {
-            synchronized (IDS) {
-                IDS.put(name, found);
+        backgrounds = colours;
+        labels = floorLabels;
+        chestValues = Map.of();
+    }
+
+    private static void highlightChests(AbstractContainerScreen<?> screen, FeatureConfigs.ChestProfit config) {
+        Map<Integer, Double> values = new HashMap<>();
+        Map<Integer, Boolean> dyes = new HashMap<>();
+        for (Slot slot : screen.getMenu().slots) {
+            if (slot.container instanceof Inventory) continue;
+            ItemStack stack = slot.getItem();
+            if (stack.isEmpty()) continue;
+            if (!CHEST_NAMES.contains(ChatFormatting.stripFormatting(stack.getHoverName().getString()))) continue;
+            ItemLore itemLore = stack.get(DataComponents.LORE);
+            if (itemLore == null) continue;
+            List<Component> lore = itemLore.lines();
+            double value = 0, cost = 0;
+            int costIndex = -1;
+            boolean hasDye = false;
+            for (int i = 0; i < lore.size(); i++) {
+                Component text = lore.get(i);
+                String line = ChatFormatting.stripFormatting(text.getString());
+                if (line.isEmpty() || line.equals("Contents") || line.equals("Cost")) {
+                    if (line.equals("Cost")) costIndex = i;
+                    if (line.isEmpty() && costIndex != -1) break;
+                    continue;
+                }
+                if (costIndex == -1) {
+                    String id = marketId(text);
+                    if (id.startsWith("DYE_")) hasDye = true;
+                    int quantity = ITEM_QUANTITY.matcher(line).matches() ? parseInt(line.substring(line.lastIndexOf('x') + 1)) : 1;
+                    value += lootValue(id) * quantity;
+                } else if (line.endsWith(" Coins")) {
+                    cost += parseInt(line.substring(0, line.indexOf(' ')).replace(",", ""));
+                }
+            }
+            values.put(slot.index, value - cost);
+            dyes.put(slot.index, hasDye);
+        }
+        Map<Integer, Integer> colours = new HashMap<>();
+        List<Map.Entry<Integer, Double>> chests = new ArrayList<>(values.entrySet());
+        chests.sort(Comparator.comparingDouble((Map.Entry<Integer, Double> e) -> e.getValue()).reversed());
+        if (!chests.isEmpty()) {
+            Map.Entry<Integer, Double> best = chests.getFirst();
+            if (best.getValue() > 0) {
+                boolean high = dyes.getOrDefault(best.getKey(), false) || best.getValue() >= config.profitHighThreshold;
+                colours.put(best.getKey(), colour(high ? config.profitHighColor : config.profitColor, 0x8055FF55));
             }
         }
-        return found;
+        if (chests.size() >= 2) {
+            Map.Entry<Integer, Double> second = chests.get(1);
+            double keyPrice = SkyBallsPriceTooltip.price("DUNGEON_CHEST_KEY", FeatureConfigs.ProfitPriceSource.SELL_ORDER);
+            if (keyPrice > 0 && second.getValue() - keyPrice > 0) colours.put(second.getKey(), colour(config.profitKeyColor, 0x8055FFFF));
+            else if (second.getValue() > 0) colours.put(second.getKey(), colour(config.profitSecondaryColor, 0x80FFFF55));
+        }
+        backgrounds = colours;
+        labels = Map.of();
+        chestValues = values;
+    }
+
+    /** Behind the slot's item (SkyBallsSlotBackgroundMixin). */
+    public static void renderSlotBackground(GuiGraphicsExtractor graphics, Slot slot) {
+        if (backgrounds.isEmpty() || slot.container instanceof Inventory) return;
+        Integer colour = backgrounds.get(slot.index);
+        if (colour != null) graphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, colour);
+    }
+
+    /** Over the slot's item, like a stack count (SkyBallsSlotBackgroundMixin). */
+    public static void renderSlotLabel(GuiGraphicsExtractor graphics, Slot slot) {
+        if (labels.isEmpty() || slot.container instanceof Inventory) return;
+        String label = labels.get(slot.index);
+        if (label == null) return;
+        var font = Minecraft.getInstance().font;
+        graphics.text(font, label, slot.x + 17 - font.width(label), slot.y + 9, 0xFFFFFFFF, true);
+    }
+
+    // ------------------------------------------------------------------------------------------------ item names
+
+    /** NoFrills' Utils.getMarketId(Text): the price id for an item named in a chest's lore. */
+    private static String marketId(Component text) {
+        String name = ChatFormatting.stripFormatting(text.getString()).trim();
+        if (ITEM_QUANTITY.matcher(name).matches()) name = name.substring(0, name.lastIndexOf(' ')).trim();
+        if (name.startsWith("Enchanted Book (") && name.endsWith(")")) {
+            String enchant = name.substring(name.indexOf('(') + 1, name.indexOf(')'))
+                .replace("Hardened Vitality", "Hardened Mana")
+                .replace("Strong Vitality", "Strong Mana")
+                .replace("Vampiric Vitality", "Mana Vampire")
+                .replace("Vivacious Vitality", "Ferocious Mana");
+            String enchantName = toId(enchant.substring(0, enchant.lastIndexOf(' ')));
+            int level = roman(enchant.substring(enchant.lastIndexOf(' ') + 1));
+            String wanted = enchant;
+            Optional<Style> style = styleOf(text, wanted::equals);
+            if (style.isPresent() && hasColour(style.get(), ChatFormatting.LIGHT_PURPLE) && !enchantName.startsWith("ULTIMATE_")) {
+                return "ENCHANTMENT_ULTIMATE_" + enchantName + "_" + level;
+            }
+            return "ENCHANTMENT_" + enchantName + "_" + level;
+        }
+        if (name.endsWith(" Essence")) return "ESSENCE_" + toId(name.substring(0, name.lastIndexOf(' ')));
+        if (name.endsWith(" Dye")) return "DYE_" + toId(name.substring(0, name.lastIndexOf(' ')));
+        if (name.startsWith("Master Skull - Tier ")) return toId(name.replace(" - ", " "));
+        if (name.startsWith("[Lvl 1] ")) {
+            String petName = name.substring(name.indexOf(']') + 2);
+            Optional<Style> style = styleOf(text, petName::equals);
+            String rarity = "COMMON";
+            if (style.isPresent()) {
+                if (hasColour(style.get(), ChatFormatting.GOLD)) rarity = "LEGENDARY";
+                if (hasColour(style.get(), ChatFormatting.DARK_PURPLE)) rarity = "EPIC";
+                if (hasColour(style.get(), ChatFormatting.BLUE)) rarity = "RARE";
+                if (hasColour(style.get(), ChatFormatting.GREEN)) rarity = "UNCOMMON";
+            }
+            return toId(petName) + "_PET_" + rarity;
+        }
+        return switch (name) {
+            case "Shadow Warp" -> "SHADOW_WARP_SCROLL";
+            case "Wither Shield" -> "WITHER_SHIELD_SCROLL";
+            case "Implosion" -> "IMPLOSION_SCROLL";
+            case "Giant's Sword" -> "GIANTS_SWORD";
+            case "Warped Stone" -> "AOTE_STONE";
+            case "Spirit Boots" -> "THORNS_BOOTS";
+            case "Spirit Shortbow" -> "ITEM_SPIRIT_BOW";
+            case "Spirit Stone" -> "SPIRIT_DECOY";
+            case "Adaptive Blade" -> "STONE_BLADE";
+            case "Wither Cloak Sword" -> "WITHER_CLOAK";
+            case "Dungeon Disc" -> "DUNGEON_DISC_1";
+            case "Clown Disc" -> "DUNGEON_DISC_2";
+            case "Watcher Disc" -> "DUNGEON_DISC_3";
+            case "Old Disc" -> "DUNGEON_DISC_4";
+            case "Necron Disc" -> "DUNGEON_DISC_5";
+            case "Shiny Wither Helmet" -> "WITHER_HELMET";
+            case "Shiny Wither Chestplate" -> "WITHER_CHESTPLATE";
+            case "Shiny Wither Leggings" -> "WITHER_LEGGINGS";
+            case "Shiny Wither Boots" -> "WITHER_BOOTS";
+            case "Shiny Necron's Handle" -> "NECRON_HANDLE";
+            case "Dusty Travel Scroll to the Kuudra Skull" -> "NETHER_FORTRESS_BOSS_TRAVEL_SCROLL";
+            case "Hellstorm Wand" -> "HELLSTORM_STAFF";
+            default -> toId(name.replace("✪", "").trim());
+        };
+    }
+
+    private static String toId(String text) {
+        return text.replace("'s", "").replace(" ", "_").toUpperCase(Locale.ROOT);
+    }
+
+    /** The style of the part of {@code text} whose string matches. */
+    private static Optional<Style> styleOf(Component text, java.util.function.Predicate<String> matches) {
+        Style[] found = {null};
+        text.visit((style, value) -> {
+            if (found[0] == null && matches.test(value.trim())) found[0] = style;
+            return Optional.empty();
+        }, Style.EMPTY);
+        return Optional.ofNullable(found[0]);
+    }
+
+    private static boolean hasColour(Style style, ChatFormatting formatting) {
+        TextColor colour = style.getColor();
+        TextColor wanted = TextColor.fromLegacyFormat(formatting);
+        return colour != null && wanted != null && colour.getValue() == wanted.getValue();
     }
 
     // ------------------------------------------------------------------------------------------------ helpers
 
     private static List<String> lore(ItemStack stack) {
-        List<String> lines = new ArrayList<>();
-        for (Component line : stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines()) {
-            String text = ChatFormatting.stripFormatting(line.getString());
-            lines.add(text == null ? "" : text);
-        }
-        return lines;
+        ItemLore lore = stack.get(DataComponents.LORE);
+        if (lore == null) return List.of();
+        List<String> out = new ArrayList<>();
+        for (Component line : lore.lines()) out.add(ChatFormatting.stripFormatting(line.getString()));
+        return out;
     }
 
-    private static int indexOf(List<String> lore, String header) {
-        for (int i = 0; i < lore.size(); i++) if (lore.get(i).trim().equals(header)) return i;
-        return -1;
-    }
-
-    private static String stripCount(String name) {
-        Matcher m = COUNT.matcher(name);
-        return m.matches() ? m.group("name").trim() : name;
-    }
-
-    private static int parseInt(String number) {
+    private static int parseInt(String text) {
         try {
-            return Integer.parseInt(number.replace(",", ""));
+            return Integer.parseInt(text.trim());
         } catch (NumberFormatException e) {
             return 0;
         }
@@ -327,6 +441,8 @@ public final class DungeonChestProfit {
                 case 'I' -> 1;
                 case 'V' -> 5;
                 case 'X' -> 10;
+                case 'L' -> 50;
+                case 'C' -> 100;
                 default -> 0;
             };
             total += value < previous ? -value : value;
@@ -335,15 +451,15 @@ public final class DungeonChestProfit {
         return total;
     }
 
-    private static Component profitText(double profit) {
-        ChatFormatting colour = Math.abs(profit) < 1000 ? ChatFormatting.DARK_GRAY : profit > 0 ? ChatFormatting.GREEN : ChatFormatting.RED;
-        return Component.literal((profit >= 0 ? "+" : "-") + coins(Math.abs(profit))).withStyle(colour);
+    private static String separator(double value) {
+        return String.format(Locale.US, "%,d", Math.round(value));
     }
 
-    private static String coins(double value) {
-        if (value >= 1_000_000_000) return String.format(Locale.US, "%.2fB", value / 1_000_000_000);
-        if (value >= 1_000_000) return String.format(Locale.US, "%.2fM", value / 1_000_000);
-        if (value >= 1_000) return String.format(Locale.US, "%.1fk", value / 1_000);
-        return String.format(Locale.US, "%.0f", value);
+    private static int colour(String value, int fallback) {
+        try {
+            return com.epic60869.skyballs.custom.util.ChromaColours.parse(value).getEffectiveColourRGB();
+        } catch (Exception e) {
+            return fallback;
+        }
     }
 }

@@ -38,6 +38,7 @@ import com.epic60869.skyballs.custom.util.Compat;
 public final class RepoItems {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final String NEU_REPO = "https://raw.githubusercontent.com/NotEnoughUpdates/NotEnoughUpdates-REPO/master/";
+	private static final String SKYHANNI_REPO = "https://raw.githubusercontent.com/hannibal002/SkyHanni-REPO/main/";
 	private static final String HYPIXEL_ITEMS = "https://api.hypixel.net/v2/resources/skyblock/items";
 	private static final HttpClient CLIENT = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
 
@@ -65,6 +66,11 @@ public final class RepoItems {
 
 	public static String neuRepoFile(String path) throws IOException, InterruptedException {
 		return fetch(NEU_REPO + path);
+	}
+
+	/** A file from SkyHanni's repo (e.g. "constants/Garden.json"). Blocking. */
+	public static String skyHanniRepoFile(String path) throws IOException, InterruptedException {
+		return fetch(SKYHANNI_REPO + path);
 	}
 
 	public static boolean itemsLoaded() {

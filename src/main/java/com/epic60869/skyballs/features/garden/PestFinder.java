@@ -87,7 +87,7 @@ public final class PestFinder {
     private static final Pattern CLEAN_PLOT_CHAT = Pattern.compile("Plot - (?<plot>.*) is now clean!");
 
     /** A plot's saved state (SkyHanni's GardenPlotApi.PlotData). */
-    private static final class PlotData {
+    static final class PlotData {
         @Expose String name;
         @Expose int pests;
         @Expose boolean isPestCountInaccurate;
@@ -103,7 +103,7 @@ public final class PestFinder {
     }
 
     /** One of the 25 plots: its id, where it is in Configure Plots, and its area. */
-    private record Plot(int id, int inventorySlot, double minX, double minZ, double maxX, double maxZ) {
+    record Plot(int id, int inventorySlot, double minX, double minZ, double maxX, double maxZ) {
         double middleX() {
             return (minX + maxX) / 2;
         }
@@ -138,7 +138,8 @@ public final class PestFinder {
         }
     }
 
-    private static final List<Plot> PLOTS = new ArrayList<>();
+    /** The 25 plots in map order: row by row from the north-west corner, as in Configure Plots. */
+    static final List<Plot> PLOTS = new ArrayList<>();
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
     private static Map<String, GardenData> storage = new HashMap<>();
     private static Path file;
@@ -168,7 +169,7 @@ public final class PestFinder {
 
     private PestFinder() {}
 
-    private static FeatureConfigs.PestFinder config() {
+    static FeatureConfigs.PestFinder config() {
         SkyBallsConfig c = SkyBallsConfig.current();
         return c == null ? null : c.farming.garden.pestFinder;
     }
@@ -259,7 +260,7 @@ public final class PestFinder {
         if (ticks % 1200 == 0) save();
     }
 
-    private static void teleportNearestInfestedPlot() {
+    static void teleportNearestInfestedPlot() {
         // need to check again for the command
         if (!SkyBallsLocation.inGarden()) {
             userError("This command only works while on the Garden!");
@@ -283,7 +284,7 @@ public final class PestFinder {
 
     // ---------------------------------------------------------------------------------------------- plots
 
-    private static Plot getCurrentPlot() {
+    static Plot getCurrentPlot() {
         var player = Minecraft.getInstance().player;
         if (player == null) return null;
         return getPlot(player.getX(), player.getY(), player.getZ());
@@ -313,7 +314,7 @@ public final class PestFinder {
         return null;
     }
 
-    private static List<Plot> getInfestedPlots() {
+    static List<Plot> getInfestedPlots() {
         return PLOTS.stream().filter(p -> p.data().pests > 0 || p.data().isPestCountInaccurate).toList();
     }
 
@@ -376,6 +377,19 @@ public final class PestFinder {
             return getPlotById(Integer.parseInt(text.trim()));
         } catch (NumberFormatException e) {
             return null;
+        }
+    }
+
+    /** Configure Plots: infested plots' slots in red (SkyHanni's plot menu highlighting), behind the item. */
+    public static void renderSlot(net.minecraft.client.gui.GuiGraphicsExtractor g, net.minecraft.world.inventory.Slot slot) {
+        FeatureConfigs.PestFinder c = config();
+        if (c == null || !c.highlightInfestedPlots || !SkyBallsLocation.inGarden()) return;
+        if (!(Minecraft.getInstance().gui.screen() instanceof ContainerScreen screen)
+            || !screen.getTitle().getString().equals("Configure Plots") || slot.container != screen.getMenu().getContainer()) return;
+        for (Plot plot : PLOTS) {
+            if (plot.inventorySlot() != slot.index) continue;
+            if (plot.data().pests > 0 || plot.data().isPestCountInaccurate) g.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xA0FF3030);
+            return;
         }
     }
 
@@ -644,7 +658,7 @@ public final class PestFinder {
         return lines;
     }
 
-    private static void sendCommand(String command) {
+    static void sendCommand(String command) {
         var connection = Minecraft.getInstance().getConnection();
         if (connection != null) connection.sendCommand(command);
     }

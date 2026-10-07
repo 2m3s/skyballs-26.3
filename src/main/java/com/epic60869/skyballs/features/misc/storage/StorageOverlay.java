@@ -8,7 +8,6 @@ import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.custom.util.Compat;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -50,7 +49,7 @@ public final class StorageOverlay {
 
     public static int colour(String special) {
         try {
-            return ChromaColour.forLegacyString(special).getEffectiveColourRGB();
+            return com.epic60869.skyballs.custom.util.ChromaColours.parse(special).getEffectiveColourRGB();
         } catch (Exception e) {
             return 0xFFFFFF00;
         }

@@ -4,7 +4,6 @@ import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.custom.util.Compat;
 import com.epic60869.skyballs.features.FeatureConfigs;
 import com.epic60869.skyballs.features.core.SkyBallsWorldRender;
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -183,7 +182,7 @@ public final class EtherwarpOverlay {
 
     private static int colour(String value, int fallback) {
         try {
-            return ChromaColour.forLegacyString(value).getEffectiveColourRGB();
+            return com.epic60869.skyballs.custom.util.ChromaColours.parse(value).getEffectiveColourRGB();
         } catch (Exception e) {
             return fallback;
         }

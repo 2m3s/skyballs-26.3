@@ -49,6 +49,7 @@ public final class SkyBallsMod implements ClientModInitializer {
         com.epic60869.skyballs.features.core.SkyBallsWorldRender.init();
 
         com.epic60869.skyballs.features.combat.CombatFeatures.init();
+        com.epic60869.skyballs.features.combat.BestiaryOverlay.init();
         com.epic60869.skyballs.features.combat.ZealotCounter.init(configDir);
         com.epic60869.skyballs.features.combat.DianaRareMobs.init();
         com.epic60869.skyballs.features.combat.PartyCoordWaypoints.init();
@@ -71,6 +72,7 @@ public final class SkyBallsMod implements ClientModInitializer {
         com.epic60869.skyballs.features.slayer.SlayerBossProfit.init(configDir);
         com.epic60869.skyballs.features.garden.GardenFeatures.init();
         com.epic60869.skyballs.features.fishing.FishingFeatures.init();
+        com.epic60869.skyballs.features.fishing.FishingHookTimer.init();
         com.epic60869.skyballs.features.dungeons.SecretChime.init();
         com.epic60869.skyballs.features.mining.MiningFeatures.init();
         com.epic60869.skyballs.features.mining.CrystalHollowsWaypoints.init();
@@ -110,9 +112,12 @@ public final class SkyBallsMod implements ClientModInitializer {
         com.epic60869.skyballs.features.misc.ScreenshotShare.init();
         com.epic60869.skyballs.features.misc.JoinCommands.init();
         com.epic60869.skyballs.features.misc.InventoryButtons.init();
+        com.epic60869.skyballs.features.misc.SpeedDisplay.init();
+        com.epic60869.skyballs.features.dungeons.SecretsDisplay.init();
         com.epic60869.skyballs.features.dungeons.CaseOpening.init();
         com.epic60869.skyballs.features.dungeons.DungeonChestProfit.init();
         SkyBallsChangelog.init();
+        SkyBallsWhatsNew.init();
         SkyBallsNopoFeatures.init(configDir);
         SkyBallsNick.init(config);
         SkyBallsMouseLock.init(config);
@@ -122,6 +127,10 @@ public final class SkyBallsMod implements ClientModInitializer {
         SkyBallsPriceTooltip.init();
         com.epic60869.skyballs.features.misc.MuseumTooltip.init(configDir);
         com.epic60869.skyballs.features.misc.AccessoryTooltip.init(configDir);
+        com.epic60869.skyballs.features.misc.EnchantParser.init();
+        com.epic60869.skyballs.features.misc.SackTracker.init(configDir);
+        com.epic60869.skyballs.features.misc.StashCompact.init();
+        com.epic60869.skyballs.features.garden.visitor.GardenVisitors.init(configDir);
         com.epic60869.skyballs.features.misc.ItemCooldowns.init();
         com.epic60869.skyballs.features.misc.EventCalendar.init();
         com.epic60869.skyballs.features.garden.PestHighlight.init();

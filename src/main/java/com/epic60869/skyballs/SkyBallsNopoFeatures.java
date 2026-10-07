@@ -568,6 +568,11 @@ public final class SkyBallsNopoFeatures {
         };
     }
 
+    /** A pet's level from its petInfo exp and tier, past the normal maximum (overflow). */
+    public static int petLevel(float xp, String tier) {
+        return calcLevel(xp, rarityOffset(tier));
+    }
+
     private static int getXpForLevel(int level, int offset) {
         int index = offset + Math.max(0, level);
         return index < PET_XP.length ? PET_XP[index] : 1886700;

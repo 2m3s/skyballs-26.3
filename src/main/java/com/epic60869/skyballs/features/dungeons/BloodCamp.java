@@ -11,7 +11,6 @@ import com.epic60869.skyballs.features.core.SkyBallsWorldRender;
 import com.epic60869.skyballs.sb.events.ServerTickCallback;
 import com.epic60869.skyballs.sb.skyblock.dungeon.secrets.DungeonManager;
 import com.epic60869.skyballs.sb.utils.render.primitive.PrimitiveCollector;
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -96,7 +95,7 @@ public final class BloodCamp {
     /** RGBA 0-1 from a MoulConfig colour string. */
     private static float[] colour(String value, float[] fallback) {
         try {
-            int argb = ChromaColour.forLegacyString(value).getEffectiveColourRGB();
+            int argb = com.epic60869.skyballs.custom.util.ChromaColours.parse(value).getEffectiveColourRGB();
             return new float[]{((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >>> 24) & 0xFF) / 255f};
         } catch (Exception e) {
             return fallback;

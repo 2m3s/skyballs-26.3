@@ -5,14 +5,15 @@ import com.epic60869.skyballs.features.FeatureConfigs;
 import com.epic60869.skyballs.features.core.SkyBallsLocation;
 import com.epic60869.skyballs.features.core.SkyBallsWorldRender;
 import com.epic60869.skyballs.sb.utils.render.primitive.PrimitiveCollector;
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Boxes starred dungeon mobs and bats. Hypixel marks starred mobs with a "✯" in the nametag armor stand above the
+ * Boxes starred dungeon mobs, bats and the F7/M7 boss withers. Hypixel marks starred mobs with a "✯" in the nametag armor stand above the
  * mob, so the mob is the closest living entity just below a starred stand. The mobs are found every few ticks; the
  * boxes are drawn every frame at the mob's interpolated position, depth-tested so nothing shows through walls.
  */
@@ -28,6 +29,7 @@ public final class StarredMobs {
     private static final String STAR = "✯";
     private static List<LivingEntity> starred = List.of();
     private static List<LivingEntity> bats = List.of();
+    private static List<LivingEntity> withers = List.of();
 
     private StarredMobs() {}
 
@@ -43,21 +45,27 @@ public final class StarredMobs {
             // Every 4 ticks: it reads every nametag.
             if (++ticks % 4 != 0) return;
             FeatureConfigs.DungeonMobs config = config();
-            if (config == null || (!config.starredMobs && !config.bats) || !SkyBallsLocation.inDungeon() || mc.level == null || mc.player == null) {
+            if (config == null || (!config.starredMobs && !config.bats && !config.withers) || !SkyBallsLocation.inDungeon() || mc.level == null || mc.player == null) {
                 starred = List.of();
                 bats = List.of();
+                withers = List.of();
                 return;
             }
+            boolean findWithers = config.withers && PositionalMessages.onFloor7();
             List<LivingEntity> foundStarred = new ArrayList<>();
             List<LivingEntity> foundBats = new ArrayList<>();
+            List<LivingEntity> foundWithers = new ArrayList<>();
             for (Entity entity : mc.level.entitiesForRendering()) {
                 if (config.bats && entity instanceof Bat bat && bat.isAlive()) foundBats.add(bat);
+                // Hypixel parks invisible withers around the boss room between phases; only the visible ones are fighting.
+                if (findWithers && entity instanceof WitherBoss wither && wither.isAlive() && !wither.isInvisible()) foundWithers.add(wither);
                 if (!config.starredMobs || !isStarredTag(entity)) continue;
                 LivingEntity mob = mobBelow(mc, entity);
                 if (mob != null && !foundStarred.contains(mob)) foundStarred.add(mob);
             }
             starred = foundStarred;
             bats = foundBats;
+            withers = foundWithers;
         });
         SkyBallsWorldRender.register(collector -> {
             FeatureConfigs.DungeonMobs config = config();
@@ -70,6 +78,10 @@ public final class StarredMobs {
             if (config.bats && !bats.isEmpty()) {
                 float[] colour = colour(config.batColor, new float[]{0.33f, 1f, 1f, 1f});
                 for (LivingEntity bat : bats) drawBox(collector, bat, partial, colour, config.starredFill, config.starredLineWidth);
+            }
+            if (config.withers && !withers.isEmpty()) {
+                float[] colour = colour(config.witherColor, new float[]{1f, 0.67f, 0f, 1f});
+                for (LivingEntity wither : withers) drawBox(collector, wither, partial, colour, config.starredFill, config.starredLineWidth);
             }
         });
     }
@@ -91,7 +103,7 @@ public final class StarredMobs {
 
     private static float[] colour(String value, float[] fallback) {
         try {
-            int argb = ChromaColour.forLegacyString(value).getEffectiveColourRGB();
+            int argb = com.epic60869.skyballs.custom.util.ChromaColours.parse(value).getEffectiveColourRGB();
             return new float[]{((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >>> 24) & 0xFF) / 255f};
         } catch (Exception e) {
             return fallback;
@@ -103,7 +115,9 @@ public final class StarredMobs {
         LivingEntity best = null;
         double bestDistance = Double.MAX_VALUE;
         for (LivingEntity mob : mc.level.getEntitiesOfClass(LivingEntity.class, search,
-                e -> !(e instanceof ArmorStand) && e != mc.player && e.isAlive())) {
+                // Not teammates standing next to the mob: real players have version 4 UUIDs, Hypixel's player-skinned mobs
+                // (Lost Adventurers, Shadow Assassins...) version 2.
+                e -> !(e instanceof ArmorStand) && !(e instanceof Player p && p.getUUID().version() == 4) && e.isAlive())) {
             double distance = mob.distanceToSqr(tag.getX(), tag.getY(), tag.getZ());
             if (distance < bestDistance) {
                 bestDistance = distance;

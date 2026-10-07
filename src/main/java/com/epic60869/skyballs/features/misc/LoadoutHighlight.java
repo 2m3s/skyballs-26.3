@@ -3,7 +3,6 @@ package com.epic60869.skyballs.features.misc;
 import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.custom.util.Compat;
 import com.epic60869.skyballs.features.core.SkyBallsLocation;
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -65,7 +64,7 @@ public final class LoadoutHighlight {
 
     private static int colour(String value) {
         try {
-            return ChromaColour.forLegacyString(value).getEffectiveColourRGB();
+            return com.epic60869.skyballs.custom.util.ChromaColours.parse(value).getEffectiveColourRGB();
         } catch (Exception e) {
             return 0xAA55FF55;
         }

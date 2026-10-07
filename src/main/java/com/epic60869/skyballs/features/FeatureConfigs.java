@@ -53,6 +53,76 @@ public final class FeatureConfigs {
         @ConfigOption(name = "Legion Display", desc = "HUD showing how many players are within Legion range (30 blocks).")
         @ConfigEditorBoolean
         public boolean legionDisplay = false;
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Bestiary Overlay", desc = "SkyHanni's Bestiary Data overlay in the Bestiary menu.")
+        public Bestiary bestiary = new Bestiary();
+    }
+
+    /** SkyHanni's BestiaryConfig (LGPL-2.1). The overlay is moved and resized in /sb gui. */
+    public static final class Bestiary {
+        @Expose
+        @ConfigOption(name = "Enabled", desc = "Show the Bestiary Data overlay in the Bestiary menu: each family's kills and progress to max or to the next tier, sorted how you choose, and each category's families found and completed. Maxed families and categories are highlighted green, and with Overall Progress hidden its Eye of Ender is highlighted red. Move it in /sb gui.")
+        @ConfigEditorBoolean
+        public boolean enabled = false;
+
+        @Expose
+        @ConfigOption(name = "Number Format", desc = "Short: 1.1k\nLong: 1,100")
+        @ConfigEditorDropdown
+        public NumberFormat numberFormat = NumberFormat.SHORT;
+
+        @Expose
+        @ConfigOption(name = "Display Type", desc = "What the overlay shows for each family, and how it's sorted.")
+        @ConfigEditorDropdown
+        public DisplayType displayType = DisplayType.GLOBAL_MAX;
+
+        @Expose
+        @ConfigOption(name = "Hide Maxed", desc = "Hide maxed families.")
+        @ConfigEditorBoolean
+        public boolean hideMaxed = false;
+
+        @Expose
+        @ConfigOption(name = "Replace Romans", desc = "Show tiers as regular numbers (9) instead of Roman numerals (IX).")
+        @ConfigEditorBoolean
+        public boolean replaceRoman = false;
+
+        public enum NumberFormat {
+            SHORT("Short"), LONG("Long");
+
+            private final String label;
+
+            NumberFormat(String label) {
+                this.label = label;
+            }
+
+            @Override
+            public String toString() {
+                return label;
+            }
+        }
+
+        public enum DisplayType {
+            GLOBAL_MAX("Global to max"),
+            GLOBAL_NEXT("Global to next tier"),
+            LOWEST_TOTAL("Lowest total kills"),
+            HIGHEST_TOTAL("Highest total kills"),
+            LOWEST_MAX("Lowest kills needed to max"),
+            HIGHEST_MAX("Highest kills needed to max"),
+            LOWEST_NEXT("Lowest kills needed to next tier"),
+            HIGHEST_NEXT("Highest kills needed to next tier");
+
+            private final String label;
+
+            DisplayType(String label) {
+                this.label = label;
+            }
+
+            @Override
+            public String toString() {
+                return label;
+            }
+        }
     }
 
     /** Mayors: a sub-category in the sidebar per mayor (shown under Mayors when it's open). */
@@ -451,8 +521,41 @@ public final class FeatureConfigs {
         public String lootshareReadyColor = "0:230:85:255:255";
     }
 
-    /** Dungeons: every section is a sub-category in the sidebar (shown under Dungeons when it's open), like SkyHanni's. */
+    /**
+     * Dungeons: the boss helpers for floors 4 to 6 and the Blessing Display are on the Dungeons page itself; every other
+     * section is a sub-category in the sidebar (shown under Dungeons when it's open), like SkyHanni's.
+     */
     public static final class Dungeons {
+        @Expose
+        @ConfigOption(name = "Spirit Bear (F4/M4)", desc = "Odin's Spirit Bear HUD for the F4 and M4 boss: spirits killed (25 on F4, 30 on M4), then the countdown until the Spirit Bear spawns once the last one dies, then \"Alive!\". Move it in /sb gui.")
+        @ConfigEditorBoolean
+        public boolean spiritBear = true;
+
+        @Expose
+        @ConfigOption(name = "Livid Solver (F5/M5)", desc = "Odin's Livid Solver: once the wool above the arena shows which Livid is real, says so in chat and boxes that Livid (not while you're blind).")
+        @ConfigEditorBoolean
+        public boolean lividSolver = true;
+
+        @Expose
+        @ConfigOption(name = "Livid Colour", desc = "Colour of the box around the real Livid.")
+        @ConfigEditorColour
+        public String lividColour = "0:120:255:85:255";
+
+        @Expose
+        @ConfigOption(name = "Livid Invulnerability (F5/M5)", desc = "Odin's HUD with the server ticks left of Livid's invulnerability after her opening line. Move it in /sb gui.")
+        @ConfigEditorBoolean
+        public boolean lividTimer = true;
+
+        @Expose
+        @ConfigOption(name = "Terracotta Timer (F6/M6)", desc = "Odin's Terracotta Timer: in the Sadan fight, seconds until each terracotta respawns (15 on F6, 12 on M6), over its flower pot.")
+        @ConfigEditorBoolean
+        public boolean terracottaTimer = true;
+
+        @Expose
+        @Accordion
+        @ConfigOption(name = "Blessing Display", desc = "Odin's Blessing Display: the dungeon's blessings and their levels, from the tab list.")
+        public BlessingDisplay blessings = new BlessingDisplay();
+
         @Expose
         @Category(name = "F7/M7", desc = "Floor 7 and Master Mode 7: dragons and relics, terminal and device solvers, and the 3x3 platform highlight.")
         public Floor7 f7 = new Floor7();
@@ -502,26 +605,96 @@ public final class FeatureConfigs {
         public ChestProfit chestProfit = new ChestProfit();
     }
 
+    /** Odin's Blessing Display: which blessings to list, and their colours. */
+    public static final class BlessingDisplay {
+        @Expose
+        @ConfigOption(name = "Enabled", desc = "In dungeons, a HUD with the blessings you have and their levels. Move it in /sb gui.")
+        @ConfigEditorBoolean
+        public boolean enabled = false;
+
+        @Expose @ConfigOption(name = "Power", desc = "List the Blessing of Power.") @ConfigEditorBoolean public boolean power = true;
+        @Expose @ConfigOption(name = "Power Colour", desc = "Colour of the Power line.") @ConfigEditorColour public String powerColour = "0:255:170:0:0";
+        @Expose @ConfigOption(name = "Time", desc = "List the Blessing of Time.") @ConfigEditorBoolean public boolean time = true;
+        @Expose @ConfigOption(name = "Time Colour", desc = "Colour of the Time line.") @ConfigEditorColour public String timeColour = "0:255:170:0:170";
+        @Expose @ConfigOption(name = "Stone", desc = "List the Blessing of Stone.") @ConfigEditorBoolean public boolean stone = false;
+        @Expose @ConfigOption(name = "Stone Colour", desc = "Colour of the Stone line.") @ConfigEditorColour public String stoneColour = "0:255:170:170:170";
+        @Expose @ConfigOption(name = "Life", desc = "List the Blessing of Life.") @ConfigEditorBoolean public boolean life = false;
+        @Expose @ConfigOption(name = "Life Colour", desc = "Colour of the Life line.") @ConfigEditorColour public String lifeColour = "0:255:255:85:85";
+        @Expose @ConfigOption(name = "Wisdom", desc = "List the Blessing of Wisdom.") @ConfigEditorBoolean public boolean wisdom = false;
+        @Expose @ConfigOption(name = "Wisdom Colour", desc = "Colour of the Wisdom line.") @ConfigEditorColour public String wisdomColour = "0:255:85:255:255";
+    }
+
+    /** NoFrills' Dungeon Chest Value and Croesus Solver (BSD-3-Clause). */
     public static final class ChestProfit {
         @Expose
-        @ConfigOption(name = "Reward Chest Profit", desc = "In a reward chest (at the end of a run or at Croesus), show what its contents are worth minus the chest's cost, above the chest.")
+        @ConfigOption(name = "Dungeon Chest Value", desc = "NoFrills: in a dungeon reward chest (at the end of a run or at Croesus), show what its contents are worth minus its cost, over the chest.")
         @ConfigEditorBoolean
-        public boolean chest = true;
+        public boolean chestValue = true;
 
         @Expose
-        @ConfigOption(name = "Croesus Chest Profit", desc = "In Croesus's menu for a run, show each chest's profit on it and highlight the most profitable one in green (red when even the best one loses coins).")
-        @ConfigEditorBoolean
-        public boolean croesusChests = true;
+        @ConfigOption(name = "Chest Value Background", desc = "The box behind the Chest Value text.")
+        @ConfigEditorColour
+        public String background = "0:204:32:32:32";
 
         @Expose
-        @ConfigOption(name = "Croesus Run Overlay", desc = "In Croesus's list of runs, tint each run: green when no chest has been opened, yellow when one has, red when there are no more chests to open.")
+        @ConfigOption(name = "Croesus Solver", desc = "NoFrills: in Croesus's list of runs, colour each run by whether its chests are unopened, rerolled with a Kismet Feather, opened or opened with a key; in a run's chests, highlight the most profitable one and the second best.")
         @ConfigEditorBoolean
-        public boolean croesusRuns = true;
+        public boolean croesusSolver = true;
 
         @Expose
-        @ConfigOption(name = "Include Essence", desc = "Count the essence in a chest towards its value.")
+        @ConfigOption(name = "Value Tooltip", desc = "Add each chest's value (contents minus cost) to its tooltip in a run's chest menu.")
         @ConfigEditorBoolean
-        public boolean includeEssence = true;
+        public boolean valueTooltip = true;
+
+        @Expose
+        @ConfigOption(name = "Floor Label", desc = "Show each run's floor (F7, M7) on it in Croesus's list.")
+        @ConfigEditorBoolean
+        public boolean floorLabel = true;
+
+        @Expose
+        @ConfigOption(name = "Profit Color", desc = "The most profitable chest.")
+        @ConfigEditorColour
+        public String profitColor = "0:160:85:255:85";
+
+        @Expose
+        @ConfigOption(name = "Profit Secondary Color", desc = "The second most profitable chest, when it's profitable.")
+        @ConfigEditorColour
+        public String profitSecondaryColor = "0:160:255:255:85";
+
+        @Expose
+        @ConfigOption(name = "Profit Key Color", desc = "The second most profitable chest, when it's worth more than a Dungeon Chest Key.")
+        @ConfigEditorColour
+        public String profitKeyColor = "0:160:85:255:255";
+
+        @Expose
+        @ConfigOption(name = "Profit High Color", desc = "The most profitable chest, when it's worth more than the High Profit Threshold or holds a dye.")
+        @ConfigEditorColour
+        public String profitHighColor = "0:160:255:85:255";
+
+        @Expose
+        @ConfigOption(name = "High Profit Threshold", desc = "Profit above which the best chest gets the High color.")
+        @ConfigEditorSlider(minValue = 0, maxValue = 100_000_000, minStep = 250_000)
+        public float profitHighThreshold = 5_000_000;
+
+        @Expose
+        @ConfigOption(name = "Unopened Color", desc = "Croesus runs with no chests opened yet.")
+        @ConfigEditorColour
+        public String unopenedColor = "0:160:85:255:85";
+
+        @Expose
+        @ConfigOption(name = "Rerolled Color", desc = "Croesus runs with no chests opened yet, after a Kismet Feather reroll.")
+        @ConfigEditorColour
+        public String rerolledColor = "0:160:85:255:255";
+
+        @Expose
+        @ConfigOption(name = "Opened Color", desc = "Croesus runs with a chest opened.")
+        @ConfigEditorColour
+        public String openedColor = "0:160:255:85:85";
+
+        @Expose
+        @ConfigOption(name = "Opened Key Color", desc = "Croesus runs with no more chests to open (a key was used).")
+        @ConfigEditorColour
+        public String openedKeyColor = "0:160:85:85:85";
     }
 
     public static final class Floor7 {
@@ -870,6 +1043,16 @@ public final class FeatureConfigs {
         @ConfigOption(name = "Back to Garden", desc = "Make the Teleport Hotkey warp you to Garden if you don't have any pests.")
         @ConfigEditorBoolean
         public boolean backToGarden = false;
+
+        @Expose
+        @ConfigOption(name = "Highlight Infested Plots", desc = "In Configure Plots (/desk), colour the plots that have pests red.")
+        @ConfigEditorBoolean
+        public boolean highlightInfestedPlots = true;
+
+        @Expose
+        @ConfigOption(name = "Plot Teleport Panel", desc = "In the Garden, show a map of your plots to the right of your inventory, like Skyblocker's Garden Plots widget: click a plot to /plottp to it. Plots with pests are red with their pest count, locked plots grey, and the plot you're in is outlined. Open Configure Plots (/desk) once so plot names and pests are known.")
+        @ConfigEditorBoolean
+        public boolean plotPanel = true;
     }
 
     /** SkyHanni's PestSpawnConfig (LGPL-2.1). */
@@ -977,6 +1160,10 @@ public final class FeatureConfigs {
         @Expose
         @Category(name = "Alerts", desc = "Trophy discoveries, deployables, maxed pets, hotspots, wormholes, the Fishing Festival and lootshare.")
         public FishingAlerts alerts = new FishingAlerts();
+
+        @Expose
+        @Category(name = "Hook & Bobber", desc = "SkyHanni's Fishing Bobber Timer and Fishing Hook Display (Hypixel's reel-in countdown, bigger and on your screen).")
+        public com.epic60869.skyballs.features.fishing.FishingHookTimer.Config hookTimer = new com.epic60869.skyballs.features.fishing.FishingHookTimer.Config();
     }
 
     public static final class FishingSeaCreatures {
@@ -1697,6 +1884,16 @@ public final class FeatureConfigs {
         public boolean secretWaypoints = false;
 
         @Expose
+        @ConfigOption(name = "Secrets Display", desc = "SkyblockAddons' Secrets Display: how many of the room's secrets you've found (2/5), with a chest icon, going from red to green. Move it in /sb gui.")
+        @ConfigEditorBoolean
+        public boolean secretsDisplay = false;
+
+        @Expose
+        @ConfigOption(name = "Hide Secrets In Action Bar", desc = "While the Secrets Display is on, take \"2/5 Secrets\" out of the action bar, like SkyblockAddons.")
+        @ConfigEditorBoolean
+        public boolean hideSecretsInActionBar = true;
+
+        @Expose
         @ConfigOption(name = "Waypoint Type", desc = "How dungeon secret waypoints are drawn. Outline: a clean boxless marker. Highlight: a filled box. Waypoint: a filled box with a beacon beam. A + adds an outline.")
         @ConfigEditorDropdown
         public Waypoint.Type waypointType = Waypoint.Type.OUTLINE;
@@ -1707,7 +1904,7 @@ public final class FeatureConfigs {
         public boolean routes = false;
 
         @Expose
-        @ConfigOption(name = "Door Highlight", desc = "Outline wither and blood doors: green when your team has the key, red when locked.")
+        @ConfigOption(name = "Door Highlight", desc = "Outline wither and blood doors, through walls: green when your team has the key, red when locked.")
         @ConfigEditorBoolean
         public boolean doorHighlight = false;
 
@@ -1833,6 +2030,11 @@ public final class FeatureConfigs {
         public float starredLineWidth = 2f;
 
         @Expose
+        @ConfigOption(name = "Highlight Teammates", desc = "Outline your dungeon teammates in their class colour, the same colours as the Leap Menu (Mage blue, Tank green...; change them under Leap Menu). Shows through walls.")
+        @ConfigEditorBoolean
+        public boolean teammates = false;
+
+        @Expose
         @ConfigOption(name = "Highlight Bats", desc = "Draw a box around bats in dungeons (secret bats), hidden behind walls.")
         @ConfigEditorBoolean
         public boolean bats = true;
@@ -1841,6 +2043,16 @@ public final class FeatureConfigs {
         @ConfigOption(name = "Bat Colour", desc = "Colour of the box around bats.")
         @ConfigEditorColour
         public String batColor = "0:255:85:255:255";
+
+        @Expose
+        @ConfigOption(name = "Highlight Withers", desc = "Draw a box around the F7/M7 boss withers (Maxor, Storm, Goldor, Necron) you can see. Hidden behind walls, so it isn't ESP.")
+        @ConfigEditorBoolean
+        public boolean withers = false;
+
+        @Expose
+        @ConfigOption(name = "Wither Colour", desc = "Colour of the box around the withers.")
+        @ConfigEditorColour
+        public String witherColor = "0:255:170:0:255";
     }
 
     public enum TerminalStyle {
@@ -1937,14 +2149,9 @@ public final class FeatureConfigs {
         public boolean splitTickTime = true;
 
         @Expose
-        @ConfigOption(name = "Tick Timers", desc = "HUD for Storm's pillars (20 ticks) and Goldor's death tick (50 ticks by default).")
+        @ConfigOption(name = "Tick Timers", desc = "HUD for Storm's pillars (20 ticks) and Goldor's death tick (every 60 ticks, from Storm's death until the core opens).")
         @ConfigEditorBoolean
         public boolean tickTimers = false;
-
-        @Expose
-        @ConfigOption(name = "Goldor Tick Period", desc = "Server ticks between Goldor's death ticks.")
-        @ConfigEditorSlider(minValue = 20, maxValue = 100, minStep = 1)
-        public int goldorTickPeriod = 50;
 
         @Expose
         @ConfigOption(name = "Storm PY Timer", desc = "Odin's Storm PY HUD: when Storm calls his lightning (\"ENERGY HEED MY CALL!\" / \"THUNDER LET ME BE YOUR CATALYST!\"), counts down 95 ticks to when to crush him under the purple pillar. Move it in /sb gui.")
@@ -2309,16 +2516,32 @@ public final class FeatureConfigs {
 
     public static final class WitherDragons {
         @Expose @ConfigOption(name = "Relic Highlight", desc = "While you hold a relic (hotbar slot 9), fill the cauldron it goes in with the relic's colour.") @ConfigEditorBoolean public boolean relicHighlight = false;
-        @Expose @ConfigOption(name = "Spawn Alert", desc = "Title, sound and chat line when a dragon starts spawning. On the first double spawn it names your priority dragon, based on your class and the Power settings below.") @ConfigEditorBoolean public boolean alert = false;
-        @Expose @ConfigOption(name = "Split Power", desc = "Power blessing level (Time counts as half) needed to split the first double spawn: Archer and Tank take one dragon, Berserk, Mage and Healer the other. 0 always splits; leave it at 0 for party finder teams.") @ConfigEditorSlider(minValue = 0, maxValue = 32, minStep = 0.1f) public float power = 0;
-        @Expose @ConfigOption(name = "Easy Power", desc = "Power needed to split when one of the two dragons is Purple.") @ConfigEditorSlider(minValue = 0, maxValue = 32, minStep = 0.1f) public float powerEasy = 0;
-        @Expose @ConfigOption(name = "Spawn Timer", desc = "Seconds until each spawning dragon appears, above its spawn point.") @ConfigEditorBoolean public boolean timer = false;
+        @Expose @ConfigOption(name = "Spawn Alert", desc = "Title, sound and chat line when a dragon starts spawning. Your priority dragon is the one that spawns first (since the Minister update dragons spawn one after another), or the second one for the Solo Priority class.") @ConfigEditorBoolean public boolean alert = false;
+        @Expose @ConfigOption(name = "Solo Priority", desc = "When two dragons are spawning, this class takes the one that spawns second; everyone else takes the first. Off: everyone takes the first.") @ConfigEditorDropdown public DragonSoloPriority soloPriority = DragonSoloPriority.OFF;
+        @Expose @ConfigOption(name = "First Dragon Only", desc = "Solo Priority only on the first two dragons; after that everyone takes the one that spawns first.") @ConfigEditorBoolean public boolean firstDragonOnly = true;
+        @Expose @ConfigOption(name = "Spawn Timer", desc = "Seconds until each spawning dragon appears, above its spawn point, and your priority dragon's timer big in the middle of the screen.") @ConfigEditorBoolean public boolean timer = false;
         @Expose @ConfigOption(name = "Kill Areas", desc = "Outline the kill area of every spawning or alive dragon.") @ConfigEditorBoolean public boolean boxes = false;
         @Expose @ConfigOption(name = "Dragon Hitboxes", desc = "Outline each part of every alive dragon in its colour.") @ConfigEditorBoolean public boolean hitboxes = false;
         @Expose @ConfigOption(name = "Tracer", desc = "Line to your priority spawning dragon.") @ConfigEditorBoolean public boolean tracers = false;
         @Expose @ConfigOption(name = "Stack Waypoints", desc = "Where to stack while a dragon spawns. Simple: one box on the spawn point. Advanced: boxes the shape of the dragon.") @ConfigEditorDropdown public DragonWaypoints waypoints = DragonWaypoints.OFF;
         @Expose @ConfigOption(name = "Dragon Health", desc = "Each alive dragon's health on it.") @ConfigEditorBoolean public boolean health = false;
+        @Expose @ConfigOption(name = "Relic Place Timer", desc = "Once all five relics are placed, a chat line per relic with who placed it and how long after the Wither King appeared, with your PB for your relic (NoammAddons' Place Timer).") @ConfigEditorBoolean public boolean relicTimer = false;
         @Expose @ConfigOption(name = "Ice Spray Tracker", desc = "Chat line with how many ticks after spawning each dragon was Ice Sprayed.") @ConfigEditorBoolean public boolean trackIceSpray = false;
+    }
+
+    public enum DragonSoloPriority {
+        OFF("Off"), HEALER("Healer"), TANK("Tank");
+
+        private final String label;
+
+        DragonSoloPriority(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     public enum DragonWaypoints {

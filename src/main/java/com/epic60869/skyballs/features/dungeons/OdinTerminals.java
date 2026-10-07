@@ -6,7 +6,6 @@ import com.epic60869.skyballs.SkyBallsConfig;
 import com.epic60869.skyballs.features.FeatureConfigs;
 import com.epic60869.skyballs.features.core.SkyBallsLocation;
 import com.epic60869.skyballs.sb.events.ServerTickCallback;
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -89,6 +88,12 @@ public final class OdinTerminals {
         // NoammAddons style: its panel is drawn over the whole screen and takes the clicks.
         net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.AFTER_INIT.register((client, screen, w, h) -> {
             if (!(screen instanceof AbstractContainerScreen<?> container)) return;
+            // Pick the terminal up as soon as its screen opens (also when Hypixel reopens it), not at the end of the
+            // next client tick: until then the vanilla menu was drawn for a frame or two.
+            if (current == null || current.menu != container.getMenu()) {
+                current = null;
+                if (enabled() && com.epic60869.skyballs.custom.util.Compat.isOnSkyblock()) open(container);
+            }
             net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.afterExtract(screen).register((s, g, mouseX, mouseY, delta) -> {
                 if (active() && noammStyle() && current.menu == container.getMenu()) renderNoamm(g, mouseX, mouseY);
             });
@@ -453,7 +458,7 @@ public final class OdinTerminals {
 
     static int colour(String value, int fallback) {
         try {
-            return ChromaColour.forLegacyString(value).getEffectiveColourRGB();
+            return com.epic60869.skyballs.custom.util.ChromaColours.parse(value).getEffectiveColourRGB();
         } catch (Exception e) {
             return fallback;
         }
